@@ -119,3 +119,4 @@ jobs:
             git commit -m "CI output: v7 Samsung ksud + KernelSU manager build"
             git push
           fi
+# v7 rebuild - standalone
