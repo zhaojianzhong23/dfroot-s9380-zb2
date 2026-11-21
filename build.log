@@ -1,0 +1,1146 @@
+=== [1/6] toolchain ===
+Ubuntu clang version 18.1.3 (1ubuntu1)
+llvm-objcopy, compatible with GNU objcopy
+=== [2/6] fetch GKI android15-6.6.77_r00 ===
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  598k    0  598k    0     0   821k      0 --:--:-- --:--:-- --:--:--  821k100 2307k    0 2307k    0     0  1331k      0 --:--:--  0:00:01 --:--:-- 1331k100 4288k    0 4288k    0     0  1570k      0 --:--:--  0:00:02 --:--:-- 1570k100 6576k    0 6576k    0     0  1756k      0 --:--:--  0:00:03 --:--:-- 1756k100 9824k    0 9824k    0     0  2076k      0 --:--:--  0:00:04 --:--:-- 2076k100 12.2M    0 12.2M    0     0  2151k      0 --:--:--  0:00:05 --:--:-- 2342k100 13.6M    0 13.6M    0     0  2006k      0 --:--:--  0:00:06 --:--:-- 2230k100 15.0M    0 15.0M    0     0  1973k      0 --:--:--  0:00:07 --:--:-- 2190k100 16.7M    0 16.7M    0     0  1968k      0 --:--:--  0:00:08 --:--:-- 2126k100 18.9M    0 18.9M    0     0  1988k      0 --:--:--  0:00:09 --:--:-- 1907k100 19.9M    0 19.9M    0     0  1898k      0 --:--:--  0:00:10 --:--:-- 1600k100 20.7M    0 20.7M    0     0  1811k      0 --:--:--  0:00:11 --:--:-- 1526k100 21.7M    0 21.7M    0     0  1745k      0 --:--:--  0:00:12 --:--:-- 1386k100 23.1M    0 23.1M    0     0  1727k      0 --:--:--  0:00:13 --:--:-- 1308k100 26.0M    0 26.0M    0     0  1808k      0 --:--:--  0:00:14 --:--:-- 1453k100 28.5M    0 28.5M    0     0  1855k      0 --:--:--  0:00:15 --:--:-- 1760k100 30.2M    0 30.2M    0     0  1841k      0 --:--:--  0:00:16 --:--:-- 1911k100 32.3M    0 32.3M    0     0  1870k      0 --:--:--  0:00:17 --:--:-- 2186k100 34.3M    0 34.3M    0     0  1875k      0 --:--:--  0:00:18 --:--:-- 2277k100 35.9M    0 35.9M    0     0  1864k      0 --:--:--  0:00:19 --:--:-- 2029k100 38.1M    0 38.1M    0     0  1883k      0 --:--:--  0:00:20 --:--:-- 1973k100 40.0M    0 40.0M    0     0  1887k      0 --:--:--  0:00:21 --:--:-- 2042k100 41.5M    0 41.5M    0     0  1868k      0 --:--:--  0:00:22 --:--:-- 1864k100 43.1M    0 43.1M    0     0  1858k      0 --:--:--  0:00:23 --:--:-- 1794k100 44.3M    0 44.3M    0     0  1837k      0 --:--:--  0:00:24 --:--:-- 1729k100 45.6M    0 45.6M    0     0  1773k      0 --:--:--  0:00:26 --:--:-- 1364k100 46.5M    0 46.5M    0     0  1783k      0 --:--:--  0:00:26 --:--:-- 1331k100 48.6M    0 48.6M    0     0  1795k      0 --:--:--  0:00:27 --:--:-- 1463k100 50.7M    0 50.7M    0     0  1808k      0 --:--:--  0:00:28 --:--:-- 1569k100 51.2M    0 51.2M    0     0  1765k      0 --:--:--  0:00:29 --:--:-- 1415k100 52.2M    0 52.2M    0     0  1740k      0 --:--:--  0:00:30 --:--:-- 1545k100 53.0M    0 53.0M    0     0  1711k      0 --:--:--  0:00:31 --:--:-- 1329k100 53.9M    0 53.9M    0     0  1686k      0 --:--:--  0:00:32 --:--:-- 1083k100 55.4M    0 55.4M    0     0  1682k      0 --:--:--  0:00:33 --:--:--  960k100 58.1M    0 58.1M    0     0  1714k      0 --:--:--  0:00:34 --:--:-- 1405k100 59.8M    0 59.8M    0     0  1716k      0 --:--:--  0:00:35 --:--:-- 1566k100 62.7M    0 62.7M    0     0  1747k      0 --:--:--  0:00:36 --:--:-- 1974k100 65.4M    0 65.4M    0     0  1775k      0 --:--:--  0:00:37 --:--:-- 2359k100 68.2M    0 68.2M    0     0  1803k      0 --:--:--  0:00:38 --:--:-- 2618k100 70.6M    0 70.6M    0     0  1821k      0 --:--:--  0:00:39 --:--:-- 2563k100 72.3M    0 72.3M    0     0  1818k      0 --:--:--  0:00:40 --:--:-- 2547k100 73.6M    0 73.6M    0     0  1803k      0 --:--:--  0:00:41 --:--:-- 2217k100 76.3M    0 76.3M    0     0  1830k      0 --:--:--  0:00:42 --:--:-- 2244k100 79.2M    0 79.2M    0     0  1854k      0 --:--:--  0:00:43 --:--:-- 2253k100 81.1M    0 81.1M    0     0  1857k      0 --:--:--  0:00:44 --:--:-- 2141k100 82.3M    0 82.3M    0     0  1844k      0 --:--:--  0:00:45 --:--:-- 2059k100 83.8M    0 83.8M    0     0  1836k      0 --:--:--  0:00:46 --:--:-- 2115k100 85.0M    0 85.0M    0     0  1816k      0 --:--:--  0:00:47 --:--:-- 1699k100 85.9M    0 85.9M    0     0  1805k      0 --:--:--  0:00:48 --:--:-- 1371k100 87.0M    0 87.0M    0     0  1791k      0 --:--:--  0:00:49 --:--:-- 1204k100 88.4M    0 88.4M    0     0  1783k      0 --:--:--  0:00:50 --:--:-- 1223k100 89.7M    0 89.7M    0     0  1776k      0 --:--:--  0:00:51 --:--:-- 1214k100 91.4M    0 91.4M    0     0  1775k      0 --:--:--  0:00:52 --:--:-- 1372k100 92.8M    0 92.8M    0     0  1769k      0 --:--:--  0:00:53 --:--:-- 1418k100 93.8M    0 93.8M    0     0  1755k      0 --:--:--  0:00:54 --:--:-- 1398k100 95.8M    0 95.8M    0     0  1761k      0 --:--:--  0:00:55 --:--:-- 1538k100 97.0M    0 97.0M    0     0  1751k      0 --:--:--  0:00:56 --:--:-- 1489k100 97.9M    0 97.9M    0     0  1737k      0 --:--:--  0:00:57 --:--:-- 1331k100 99.7M    0 99.7M    0     0  1739k      0 --:--:--  0:00:58 --:--:-- 1415k100  101M    0  101M    0     0  1744k      0 --:--:--  0:00:59 --:--:-- 1624k100  103M    0  103M    0     0  1737k      0 --:--:--  0:01:00 --:--:-- 1471k100  104M    0  104M    0     0  1729k      0 --:--:--  0:01:01 --:--:-- 1482k100  105M    0  105M    0     0  1727k      0 --:--:--  0:01:02 --:--:-- 1612k100  107M    0  107M    0     0  1726k      0 --:--:--  0:01:03 --:--:-- 1582k100  108M    0  108M    0     0  1723k      0 --:--:--  0:01:04 --:--:-- 1469k100  110M    0  110M    0     0  1724k      0 --:--:--  0:01:05 --:--:-- 1562k100  112M    0  112M    0     0  1730k      0 --:--:--  0:01:06 --:--:-- 1749k100  114M    0  114M    0     0  1734k      0 --:--:--  0:01:07 --:--:-- 1823k100  116M    0  116M    0     0  1731k      0 --:--:--  0:01:08 --:--:-- 1784k100  118M    0  118M    0     0  1734k      0 --:--:--  0:01:09 --:--:-- 1881k100  120M    0  120M    0     0  1742k      0 --:--:--  0:01:10 --:--:-- 1979k100  122M    0  122M    0     0  1748k      0 --:--:--  0:01:11 --:--:-- 1977k100  124M    0  124M    0     0  1749k      0 --:--:--  0:01:12 --:--:-- 1949k100  125M    0  125M    0     0  1746k      0 --:--:--  0:01:13 --:--:-- 1960k100  127M    0  127M    0     0  1744k      0 --:--:--  0:01:14 --:--:-- 1880k100  129M    0  129M    0     0  1749k      0 --:--:--  0:01:15 --:--:-- 1850k100  131M    0  131M    0     0  1752k      0 --:--:--  0:01:16 --:--:-- 1818k100  133M    0  133M    0     0  1751k      0 --:--:--  0:01:17 --:--:-- 1789k100  134M    0  134M    0     0  1749k      0 --:--:--  0:01:18 --:--:-- 1790k100  136M    0  136M    0     0  1752k      0 --:--:--  0:01:19 --:--:-- 1870k100  138M    0  138M    0     0  1753k      0 --:--:--  0:01:20 --:--:-- 1806k100  140M    0  140M    0     0  1755k      0 --:--:--  0:01:21 --:--:-- 1800k100  142M    0  142M    0     0  1758k      0 --:--:--  0:01:22 --:--:-- 1866k100  143M    0  143M    0     0  1753k      0 --:--:--  0:01:23 --:--:-- 1821k100  144M    0  144M    0     0  1745k      0 --:--:--  0:01:24 --:--:-- 1635k100  145M    0  145M    0     0  1739k      0 --:--:--  0:01:25 --:--:-- 1521k100  147M    0  147M    0     0  1738k      0 --:--:--  0:01:26 --:--:-- 1468k100  149M    0  149M    0     0  1740k      0 --:--:--  0:01:27 --:--:-- 1430k100  150M    0  150M    0     0  1738k      0 --:--:--  0:01:28 --:--:-- 1480k100  152M    0  152M    0     0  1736k      0 --:--:--  0:01:29 --:--:-- 1581k100  154M    0  154M    0     0  1741k      0 --:--:--  0:01:30 --:--:-- 1782k100  156M    0  156M    0     0  1745k      0 --:--:--  0:01:31 --:--:-- 1858k100  157M    0  157M    0     0  1740k      0 --:--:--  0:01:32 --:--:-- 1741k100  158M    0  158M    0     0  1734k      0 --:--:--  0:01:33 --:--:-- 1671k100  160M    0  160M    0     0  1733k      0 --:--:--  0:01:34 --:--:-- 1676k100  161M    0  161M    0     0  1730k      0 --:--:--  0:01:35 --:--:-- 1525k100  163M    0  163M    0     0  1734k      0 --:--:--  0:01:36 --:--:-- 1531k100  165M    0  165M    0     0  1731k      0 --:--:--  0:01:37 --:--:-- 1562k100  166M    0  166M    0     0  1725k      0 --:--:--  0:01:38 --:--:-- 1540k100  167M    0  167M    0     0  1723k      0 --:--:--  0:01:39 --:--:-- 1545k100  169M    0  169M    0     0  1724k      0 --:--:--  0:01:40 --:--:-- 1611k100  171M    0  171M    0     0  1722k      0 --:--:--  0:01:41 --:--:-- 1497k100  173M    0  173M    0     0  1724k      0 --:--:--  0:01:42 --:--:-- 1585k100  174M    0  174M    0     0  1720k      0 --:--:--  0:01:43 --:--:-- 1618k100  175M    0  175M    0     0  1714k      0 --:--:--  0:01:44 --:--:-- 1532k100  176M    0  176M    0     0  1709k      0 --:--:--  0:01:45 --:--:-- 1409k100  178M    0  178M    0     0  1714k      0 --:--:--  0:01:46 --:--:-- 1546k100  179M    0  179M    0     0  1709k      0 --:--:--  0:01:47 --:--:-- 1416k100  180M    0  180M    0     0  1704k      0 --:--:--  0:01:48 --:--:-- 1374k100  182M    0  182M    0     0  1700k      0 --:--:--  0:01:49 --:--:-- 1400k100  183M    0  183M    0     0  1700k      0 --:--:--  0:01:50 --:--:-- 1504k100  185M    0  185M    0     0  1703k      0 --:--:--  0:01:51 --:--:-- 1465k100  188M    0  188M    0     0  1707k      0 --:--:--  0:01:52 --:--:-- 1666k100  189M    0  189M    0     0  1705k      0 --:--:--  0:01:53 --:--:-- 1721k100  191M    0  191M    0     0  1708k      0 --:--:--  0:01:54 --:--:-- 1881k100  192M    0  192M    0     0  1703k      0 --:--:--  0:01:55 --:--:-- 1776k100  193M    0  193M    0     0  1700k      0 --:--:--  0:01:56 --:--:-- 1630k100  195M    0  195M    0     0  1697k      0 --:--:--  0:01:57 --:--:-- 1463k100  196M    0  196M    0     0  1698k      0 --:--:--  0:01:58 --:--:-- 1544k100  197M    0  197M    0     0  1689k      0 --:--:--  0:01:59 --:--:-- 1259k100  198M    0  198M    0     0  1685k      0 --:--:--  0:02:00 --:--:-- 1268k100  199M    0  199M    0     0  1681k      0 --:--:--  0:02:01 --:--:-- 1236k100  201M    0  201M    0     0  1678k      0 --:--:--  0:02:02 --:--:-- 1237k100  202M    0  202M    0     0  1674k      0 --:--:--  0:02:03 --:--:-- 1105k100  203M    0  203M    0     0  1670k      0 --:--:--  0:02:04 --:--:-- 1220k100  204M    0  204M    0     0  1669k      0 --:--:--  0:02:05 --:--:-- 1266k100  206M    0  206M    0     0  1668k      0 --:--:--  0:02:06 --:--:-- 1359k100  207M    0  207M    0     0  1664k      0 --:--:--  0:02:07 --:--:-- 1316k100  209M    0  209M    0     0  1667k      0 --:--:--  0:02:08 --:--:-- 1484k100  211M    0  211M    0     0  1668k      0 --:--:--  0:02:09 --:--:-- 1621k100  213M    0  213M    0     0  1671k      0 --:--:--  0:02:10 --:--:-- 1746k100  215M    0  215M    0     0  1671k      0 --:--:--  0:02:11 --:--:-- 1747k100  216M    0  216M    0     0  1671k      0 --:--:--  0:02:12 --:--:-- 1842k100  217M    0  217M    0     0  1667k      0 --:--:--  0:02:13 --:--:-- 1671k100  218M    0  218M    0     0  1660k      0 --:--:--  0:02:14 --:--:-- 1447k100  220M    0  220M    0     0  1661k      0 --:--:--  0:02:15 --:--:-- 1381k100  221M    0  221M    0     0  1657k      0 --:--:--  0:02:16 --:--:-- 1293k100  223M    0  223M    0     0  1658k      0 --:--:--  0:02:17 --:--:-- 1310k100  225M    0  225M    0     0  1660k      0 --:--:--  0:02:18 --:--:-- 1492k100  225M    0  225M    0     0  1661k      0 --:--:--  0:02:18 --:--:-- 1675k
+=== [3/6] prepare kernel with EXACT device .config ===
+  HOSTCC  scripts/basic/fixdep
+  HOSTCC  scripts/kconfig/conf.o
+  HOSTCC  scripts/kconfig/confdata.o
+  HOSTCC  scripts/kconfig/expr.o
+  LEX     scripts/kconfig/lexer.lex.c
+  YACC    scripts/kconfig/parser.tab.[ch]
+  HOSTCC  scripts/kconfig/lexer.lex.o
+  HOSTCC  scripts/kconfig/menu.o
+  HOSTCC  scripts/kconfig/parser.tab.o
+  HOSTCC  scripts/kconfig/preprocess.o
+  HOSTCC  scripts/kconfig/symbol.o
+  HOSTCC  scripts/kconfig/util.o
+  HOSTLD  scripts/kconfig/conf
+#
+# configuration written to .config
+#
+  HOSTCC  arch/arm64/tools/gen-hyprel
+  WRAP    arch/arm64/include/generated/uapi/asm/kvm_para.h
+  WRAP    arch/arm64/include/generated/uapi/asm/errno.h
+  WRAP    arch/arm64/include/generated/uapi/asm/ioctl.h
+  WRAP    arch/arm64/include/generated/uapi/asm/ioctls.h
+  WRAP    arch/arm64/include/generated/uapi/asm/ipcbuf.h
+  WRAP    arch/arm64/include/generated/uapi/asm/msgbuf.h
+  HOSTCC  scripts/dtc/dtc.o
+  WRAP    arch/arm64/include/generated/uapi/asm/poll.h
+  WRAP    arch/arm64/include/generated/uapi/asm/resource.h
+  WRAP    arch/arm64/include/generated/uapi/asm/sembuf.h
+  WRAP    arch/arm64/include/generated/uapi/asm/shmbuf.h
+  WRAP    arch/arm64/include/generated/uapi/asm/siginfo.h
+  WRAP    arch/arm64/include/generated/uapi/asm/socket.h
+  WRAP    arch/arm64/include/generated/uapi/asm/sockios.h
+  WRAP    arch/arm64/include/generated/uapi/asm/stat.h
+  WRAP    arch/arm64/include/generated/uapi/asm/swab.h
+  WRAP    arch/arm64/include/generated/uapi/asm/termbits.h
+  WRAP    arch/arm64/include/generated/uapi/asm/termios.h
+  WRAP    arch/arm64/include/generated/uapi/asm/types.h
+  UPD     include/config/kernel.release
+  HOSTCC  scripts/dtc/flattree.o
+  WRAP    arch/arm64/include/generated/asm/early_ioremap.h
+  WRAP    arch/arm64/include/generated/asm/mcs_spinlock.h
+  WRAP    arch/arm64/include/generated/asm/qrwlock.h
+  WRAP    arch/arm64/include/generated/asm/qspinlock.h
+  WRAP    arch/arm64/include/generated/asm/parport.h
+  WRAP    arch/arm64/include/generated/asm/user.h
+  WRAP    arch/arm64/include/generated/asm/bugs.h
+  WRAP    arch/arm64/include/generated/asm/delay.h
+  WRAP    arch/arm64/include/generated/asm/div64.h
+  WRAP    arch/arm64/include/generated/asm/dma-mapping.h
+  WRAP    arch/arm64/include/generated/asm/dma.h
+  WRAP    arch/arm64/include/generated/asm/emergency-restart.h
+  WRAP    arch/arm64/include/generated/asm/hw_irq.h
+  WRAP    arch/arm64/include/generated/asm/irq_regs.h
+  WRAP    arch/arm64/include/generated/asm/kdebug.h
+  WRAP    arch/arm64/include/generated/asm/kmap_size.h
+  WRAP    arch/arm64/include/generated/asm/local.h
+  WRAP    arch/arm64/include/generated/asm/local64.h
+  WRAP    arch/arm64/include/generated/asm/mmiowb.h
+  WRAP    arch/arm64/include/generated/asm/msi.h
+  HOSTCC  scripts/dtc/fstree.o
+  WRAP    arch/arm64/include/generated/asm/serial.h
+  WRAP    arch/arm64/include/generated/asm/softirq_stack.h
+  WRAP    arch/arm64/include/generated/asm/switch_to.h
+  WRAP    arch/arm64/include/generated/asm/trace_clock.h
+  WRAP    arch/arm64/include/generated/asm/unaligned.h
+  WRAP    arch/arm64/include/generated/asm/vga.h
+  UPD     include/generated/uapi/linux/version.h
+  HOSTCC  scripts/dtc/data.o
+  UPD     include/generated/utsrelease.h
+  HOSTCC  scripts/unifdef
+  UPD     include/generated/compile.h
+  HOSTCC  scripts/dtc/livetree.o
+  HOSTCC  scripts/dtc/treesource.o
+  HOSTCC  scripts/dtc/srcpos.o
+  HOSTCC  scripts/dtc/checks.o
+  HOSTCC  scripts/dtc/util.o
+  LEX     scripts/dtc/dtc-lexer.lex.c
+  YACC    scripts/dtc/dtc-parser.tab.[ch]
+  HOSTCC  scripts/dtc/libfdt/fdt.o
+  HOSTCC  scripts/dtc/libfdt/fdt_ro.o
+  HDRINST usr/include/asm-generic/shmbuf.h
+  HDRINST usr/include/asm-generic/msgbuf.h
+  HDRINST usr/include/asm-generic/posix_types.h
+  HOSTCC  scripts/dtc/libfdt/fdt_wip.o
+  HDRINST usr/include/asm-generic/ucontext.h
+  HDRINST usr/include/asm-generic/mman.h
+  HDRINST usr/include/asm-generic/statfs.h
+  HDRINST usr/include/asm-generic/resource.h
+  HDRINST usr/include/asm-generic/mman-common.h
+  HDRINST usr/include/asm-generic/swab.h
+  HDRINST usr/include/asm-generic/types.h
+  HOSTCC  scripts/dtc/libfdt/fdt_sw.o
+  HDRINST usr/include/asm-generic/kvm_para.h
+  HDRINST usr/include/asm-generic/ioctl.h
+  HDRINST usr/include/asm-generic/setup.h
+  HDRINST usr/include/asm-generic/ioctls.h
+  HDRINST usr/include/asm-generic/int-ll64.h
+  HDRINST usr/include/asm-generic/hugetlb_encode.h
+  HDRINST usr/include/asm-generic/auxvec.h
+  HDRINST usr/include/asm-generic/errno.h
+  HOSTCC  scripts/dtc/libfdt/fdt_rw.o
+  HDRINST usr/include/asm-generic/param.h
+  HDRINST usr/include/asm-generic/bpf_perf_event.h
+  HOSTCC  scripts/dtc/libfdt/fdt_strerror.o
+  HDRINST usr/include/asm-generic/termios.h
+  HDRINST usr/include/asm-generic/termbits-common.h
+  HDRINST usr/include/asm-generic/unistd.h
+  HDRINST usr/include/asm-generic/errno-base.h
+  HDRINST usr/include/asm-generic/sockios.h
+  HDRINST usr/include/asm-generic/siginfo.h
+  HOSTCC  scripts/dtc/libfdt/fdt_empty_tree.o
+  HDRINST usr/include/asm-generic/stat.h
+  HOSTCC  scripts/dtc/libfdt/fdt_addresses.o
+  HDRINST usr/include/asm-generic/termbits.h
+  HDRINST usr/include/asm-generic/signal.h
+  HDRINST usr/include/asm-generic/int-l64.h
+  HOSTCC  scripts/dtc/libfdt/fdt_overlay.o
+  HDRINST usr/include/asm-generic/poll.h
+  HDRINST usr/include/asm-generic/signal-defs.h
+  HDRINST usr/include/asm-generic/fcntl.h
+  HDRINST usr/include/asm-generic/ipcbuf.h
+  HDRINST usr/include/asm-generic/socket.h
+  HDRINST usr/include/asm-generic/bitsperlong.h
+  HOSTCC  scripts/dtc/fdtoverlay.o
+  HDRINST usr/include/asm-generic/sembuf.h
+  HDRINST usr/include/drm/lima_drm.h
+  HDRINST usr/include/drm/vgem_drm.h
+  HDRINST usr/include/drm/armada_drm.h
+  HOSTCC  scripts/dtc/dtc-lexer.lex.o
+  HDRINST usr/include/drm/amdgpu_drm.h
+  HDRINST usr/include/drm/drm_mode.h
+  HDRINST usr/include/drm/msm_drm.h
+  HDRINST usr/include/drm/habanalabs_accel.h
+  HOSTCC  scripts/dtc/dtc-parser.tab.o
+  HOSTLD  scripts/dtc/fdtoverlay
+  HDRINST usr/include/drm/exynos_drm.h
+  HDRINST usr/include/drm/qaic_accel.h
+  HDRINST usr/include/drm/virtgpu_drm.h
+  HDRINST usr/include/drm/drm_sarea.h
+  HDRINST usr/include/drm/drm.h
+  HDRINST usr/include/drm/v3d_drm.h
+  HDRINST usr/include/drm/i915_drm.h
+  HDRINST usr/include/drm/radeon_drm.h
+  HDRINST usr/include/drm/qxl_drm.h
+  HDRINST usr/include/drm/tegra_drm.h
+  HDRINST usr/include/drm/ivpu_accel.h
+  HDRINST usr/include/drm/drm_fourcc.h
+  HDRINST usr/include/drm/nouveau_drm.h
+  HDRINST usr/include/drm/vmwgfx_drm.h
+  HDRINST usr/include/drm/etnaviv_drm.h
+  HDRINST usr/include/drm/omap_drm.h
+  HDRINST usr/include/drm/vc4_drm.h
+  HDRINST usr/include/drm/panfrost_drm.h
+  HDRINST usr/include/linux/map_to_7segment.h
+  HDRINST usr/include/linux/signalfd.h
+  HDRINST usr/include/linux/btrfs_tree.h
+  HDRINST usr/include/linux/arcfb.h
+  HDRINST usr/include/linux/virtio_9p.h
+  HOSTLD  scripts/dtc/dtc
+  HDRINST usr/include/linux/blkpg.h
+  HDRINST usr/include/linux/udf_fs_i.h
+  HDRINST usr/include/linux/nfs.h
+  HDRINST usr/include/linux/icmp.h
+  HDRINST usr/include/linux/quota.h
+  HDRINST usr/include/linux/elf-em.h
+  HDRINST usr/include/linux/virtio_scsi.h
+  HDRINST usr/include/linux/timex.h
+  HDRINST usr/include/linux/sched.h
+  HDRINST usr/include/linux/tc_ematch/tc_em_meta.h
+  HDRINST usr/include/linux/tc_ematch/tc_em_text.h
+  HDRINST usr/include/linux/tc_ematch/tc_em_cmp.h
+  HDRINST usr/include/linux/tc_ematch/tc_em_ipt.h
+  HDRINST usr/include/linux/tc_ematch/tc_em_nbyte.h
+  HDRINST usr/include/linux/if_slip.h
+  HOSTCC  scripts/genksyms/genksyms.o
+  HDRINST usr/include/linux/ndctl.h
+  HOSTCC  scripts/selinux/genheaders/genheaders
+  HOSTCC  scripts/selinux/mdp/mdp
+  HDRINST usr/include/linux/v4l2-controls.h
+  HDRINST usr/include/linux/rtc.h
+  HDRINST usr/include/linux/fsverity.h
+  HDRINST usr/include/linux/tls.h
+  HDRINST usr/include/linux/mount.h
+  HDRINST usr/include/linux/dqblk_xfs.h
+  HDRINST usr/include/linux/nfsd/export.h
+  HDRINST usr/include/linux/nfsd/stats.h
+  HDRINST usr/include/linux/nfsd/cld.h
+  HDRINST usr/include/linux/nfsd/debug.h
+  HDRINST usr/include/linux/chio.h
+  YACC    scripts/genksyms/parse.tab.[ch]
+  HDRINST usr/include/linux/close_range.h
+  HDRINST usr/include/linux/cachefiles.h
+  HDRINST usr/include/linux/virtio_pcidev.h
+  HDRINST usr/include/linux/iio/buffer.h
+  LEX     scripts/genksyms/lex.lex.c
+  HDRINST usr/include/linux/iio/types.h
+  HOSTCC  scripts/kallsyms
+  HOSTCC  scripts/sorttable
+  HDRINST usr/include/linux/iio/events.h
+  HDRINST usr/include/linux/xattr.h
+  HDRINST usr/include/linux/net_dropmon.h
+  HOSTCC  scripts/genksyms/parse.tab.o
+  HDRINST usr/include/linux/handshake.h
+  HDRINST usr/include/linux/zorro_ids.h
+  HDRINST usr/include/linux/atmppp.h
+  HDRINST usr/include/linux/virtio_pci.h
+  HDRINST usr/include/linux/bpfilter.h
+  HDRINST usr/include/linux/mrp_bridge.h
+  HDRINST usr/include/linux/cuda.h
+  HDRINST usr/include/linux/securebits.h
+  HDRINST usr/include/linux/string.h
+  HDRINST usr/include/linux/suspend_ioctls.h
+  HDRINST usr/include/linux/input.h
+  HDRINST usr/include/linux/user_events.h
+  HOSTCC  scripts/genksyms/lex.lex.o
+  HDRINST usr/include/linux/if_plip.h
+  HDRINST usr/include/linux/virtio_gpio.h
+  HDRINST usr/include/linux/bt-bmc.h
+  HDRINST usr/include/linux/posix_types.h
+  HOSTCC  scripts/asn1_compiler
+  HDRINST usr/include/linux/ccs.h
+  HDRINST usr/include/linux/virtio_config.h
+  HDRINST usr/include/linux/reboot.h
+  HDRINST usr/include/linux/reiserfs_xattr.h
+  HDRINST usr/include/linux/pps.h
+  HDRINST usr/include/linux/nbd.h
+  HDRINST usr/include/linux/virtio_mem.h
+  HDRINST usr/include/linux/serial_core.h
+  HDRINST usr/include/linux/iso_fs.h
+  HDRINST usr/include/linux/wireguard.h
+  HDRINST usr/include/linux/nfs3.h
+  HDRINST usr/include/linux/atmlec.h
+  HDRINST usr/include/linux/veth.h
+  HDRINST usr/include/linux/icmpv6.h
+  HDRINST usr/include/linux/kernelcapi.h
+  HDRINST usr/include/linux/personality.h
+  HDRINST usr/include/linux/openvswitch.h
+  HDRINST usr/include/linux/psp-dbc.h
+  HDRINST usr/include/linux/iommufd.h
+  HDRINST usr/include/linux/oom.h
+  HDRINST usr/include/linux/netdevice.h
+  HDRINST usr/include/linux/mei.h
+  HDRINST usr/include/linux/cyclades.h
+  HDRINST usr/include/linux/caif/if_caif.h
+  HDRINST usr/include/linux/caif/caif_socket.h
+  HDRINST usr/include/linux/tipc_netlink.h
+  HDRINST usr/include/linux/if_pppox.h
+  HDRINST usr/include/linux/apm_bios.h
+  HDRINST usr/include/linux/i2c.h
+  HDRINST usr/include/linux/gfs2_ondisk.h
+  HDRINST usr/include/linux/mman.h
+  HDRINST usr/include/linux/vbox_vmmdev_types.h
+  HDRINST usr/include/linux/lp.h
+  HDRINST usr/include/linux/atmdev.h
+  HDRINST usr/include/linux/netlink.h
+  HDRINST usr/include/linux/virtio_net.h
+  HDRINST usr/include/linux/nfc.h
+  HDRINST usr/include/linux/sonypi.h
+  HDRINST usr/include/linux/bpqether.h
+  HDRINST usr/include/linux/if_alg.h
+  HDRINST usr/include/linux/omapfb.h
+  HDRINST usr/include/linux/tipc_sockets_diag.h
+  HDRINST usr/include/linux/smc.h
+  HDRINST usr/include/linux/pci.h
+  HDRINST usr/include/linux/vm_sockets.h
+  HDRINST usr/include/linux/virtio_scmi.h
+  HDRINST usr/include/linux/ila.h
+  HDRINST usr/include/linux/atm.h
+  HDRINST usr/include/linux/virtio_i2c.h
+  HDRINST usr/include/linux/posix_acl_xattr.h
+  HDRINST usr/include/linux/atmmpc.h
+  HDRINST usr/include/linux/hsr_netlink.h
+  HDRINST usr/include/linux/seg6.h
+  HDRINST usr/include/linux/if_bridge.h
+  HDRINST usr/include/linux/msdos_fs.h
+  HDRINST usr/include/linux/uleds.h
+  HDRINST usr/include/linux/ivtv.h
+  HDRINST usr/include/linux/adfs_fs.h
+  HDRINST usr/include/linux/romfs_fs.h
+  HDRINST usr/include/linux/erspan.h
+  HDRINST usr/include/linux/if_phonet.h
+  HDRINST usr/include/linux/seg6_hmac.h
+  HOSTLD  scripts/genksyms/genksyms
+  HDRINST usr/include/linux/loop.h
+  HDRINST usr/include/linux/udp.h
+  HDRINST usr/include/linux/input-event-codes.h
+  HDRINST usr/include/linux/mempolicy.h
+  HDRINST usr/include/linux/resource.h
+  HDRINST usr/include/linux/fsi.h
+  HDRINST usr/include/linux/phonet.h
+  HDRINST usr/include/linux/netlink_diag.h
+  HDRINST usr/include/linux/if_hippi.h
+  HDRINST usr/include/linux/sem.h
+  HDRINST usr/include/linux/aspeed-p2a-ctrl.h
+  HDRINST usr/include/linux/ext4.h
+  HDRINST usr/include/linux/rpmsg_types.h
+  HDRINST usr/include/linux/dlm.h
+  HDRINST usr/include/linux/if_fc.h
+  GEN     arch/arm64/include/generated/asm/cpucaps.h
+  HDRINST usr/include/linux/dm-user.h
+  GEN     arch/arm64/include/generated/asm/sysreg-defs.h
+  HDRINST usr/include/linux/matroxfb.h
+  HDRINST usr/include/linux/netfilter_bridge.h
+  HDRINST usr/include/linux/mmtimer.h
+  HDRINST usr/include/linux/iommu.h
+  HDRINST usr/include/linux/shm.h
+  HDRINST usr/include/linux/if_tun.h
+  HDRINST usr/include/linux/auto_dev-ioctl.h
+  HDRINST usr/include/linux/fb.h
+  HDRINST usr/include/linux/futex.h
+  HDRINST usr/include/linux/libc-compat.h
+  CC      scripts/mod/empty.o
+  HOSTCC  scripts/mod/mk_elfconfig
+  HDRINST usr/include/linux/limits.h
+  CC      scripts/mod/devicetable-offsets.s
+  HDRINST usr/include/linux/fsl_hypervisor.h
+  HDRINST usr/include/linux/nfs_mount.h
+  HDRINST usr/include/linux/virtio_mmio.h
+  HDRINST usr/include/linux/audit.h
+  HDRINST usr/include/linux/uvcvideo.h
+  HDRINST usr/include/linux/stm.h
+  HDRINST usr/include/linux/cciss_defs.h
+  HDRINST usr/include/linux/ultrasound.h
+  HDRINST usr/include/linux/media-bus-format.h
+  HDRINST usr/include/linux/idxd.h
+  HDRINST usr/include/linux/acct.h
+  HDRINST usr/include/linux/ipmi.h
+  HDRINST usr/include/linux/vhost_types.h
+  MKELF   scripts/mod/elfconfig.h
+  HDRINST usr/include/linux/vhost.h
+  HOSTCC  scripts/mod/modpost.o
+  HOSTCC  scripts/mod/sumversion.o
+  HDRINST usr/include/linux/ethtool_netlink.h
+  HOSTCC  scripts/mod/symsearch.o
+  HDRINST usr/include/linux/sched/types.h
+  HDRINST usr/include/linux/fou.h
+  HDRINST usr/include/linux/vmcore.h
+  HDRINST usr/include/linux/vbox_err.h
+  HDRINST usr/include/linux/dma-heap.h
+  HDRINST usr/include/linux/swab.h
+  HDRINST usr/include/linux/gpio.h
+  HDRINST usr/include/linux/ife.h
+  HDRINST usr/include/linux/unix_diag.h
+  UPD     scripts/mod/devicetable-offsets.h
+  HDRINST usr/include/linux/f2fs.h
+  HDRINST usr/include/linux/udmabuf.h
+  HDRINST usr/include/linux/vboxguest.h
+  HOSTCC  scripts/mod/file2alias.o
+  HDRINST usr/include/linux/v4l2-dv-timings.h
+  HDRINST usr/include/linux/blkzoned.h
+  HDRINST usr/include/linux/types.h
+  HDRINST usr/include/linux/kcov.h
+  HDRINST usr/include/linux/virtio_console.h
+  HDRINST usr/include/linux/in.h
+  HDRINST usr/include/linux/gameport.h
+  HDRINST usr/include/linux/radeonfb.h
+  HDRINST usr/include/linux/hyperv.h
+  HDRINST usr/include/linux/fs.h
+  HDRINST usr/include/linux/sctp.h
+  HDRINST usr/include/linux/random.h
+  HDRINST usr/include/linux/mqueue.h
+  HDRINST usr/include/linux/utime.h
+  HDRINST usr/include/linux/nilfs2_ondisk.h
+  HDRINST usr/include/linux/wait.h
+  HDRINST usr/include/linux/kvm_para.h
+  HDRINST usr/include/linux/scc.h
+  HDRINST usr/include/linux/module.h
+  HDRINST usr/include/linux/net_tstamp.h
+  HDRINST usr/include/linux/if_addr.h
+  HDRINST usr/include/linux/hiddev.h
+  HDRINST usr/include/linux/if_bonding.h
+  HDRINST usr/include/linux/net.h
+  HDRINST usr/include/linux/virtio_bt.h
+  HDRINST usr/include/linux/netfilter_arp/arp_tables.h
+  HDRINST usr/include/linux/netfilter_arp/arpt_mangle.h
+  HDRINST usr/include/linux/pmu.h
+  HDRINST usr/include/linux/nsfs.h
+  HDRINST usr/include/linux/uinput.h
+  HDRINST usr/include/linux/devlink.h
+  HDRINST usr/include/linux/atmsap.h
+  HDRINST usr/include/linux/loadpin.h
+  HDRINST usr/include/linux/elf.h
+  HDRINST usr/include/linux/binfmts.h
+  HDRINST usr/include/linux/atm_eni.h
+  HDRINST usr/include/linux/virtio_snd.h
+  HDRINST usr/include/linux/ipmi_msgdefs.h
+  HDRINST usr/include/linux/eventfd.h
+  HDRINST usr/include/linux/blktrace_api.h
+  HDRINST usr/include/linux/major.h
+  HDRINST usr/include/linux/affs_hardblocks.h
+  HDRINST usr/include/linux/rpl.h
+  HDRINST usr/include/linux/sev-guest.h
+  HDRINST usr/include/linux/tee.h
+  HDRINST usr/include/linux/ioctl.h
+  HDRINST usr/include/linux/byteorder/big_endian.h
+  HDRINST usr/include/linux/byteorder/little_endian.h
+  HDRINST usr/include/linux/if_vlan.h
+  HDRINST usr/include/linux/if_infiniband.h
+  HDRINST usr/include/linux/atmarp.h
+  HDRINST usr/include/linux/selinux_netlink.h
+  HDRINST usr/include/linux/spi/spidev.h
+  HDRINST usr/include/linux/spi/spi.h
+  HDRINST usr/include/linux/qnxtypes.h
+  HDRINST usr/include/linux/isdn/capicmd.h
+  HDRINST usr/include/linux/landlock.h
+  HDRINST usr/include/linux/joystick.h
+  HDRINST usr/include/linux/kcm.h
+  HDRINST usr/include/linux/gzvm.h
+  HDRINST usr/include/linux/virtio_crypto.h
+  HDRINST usr/include/linux/atm_idt77105.h
+  HDRINST usr/include/linux/psp-sev.h
+  HDRINST usr/include/linux/nfs4_mount.h
+  HDRINST usr/include/linux/ip_vs.h
+  HDRINST usr/include/linux/sysctl.h
+  HDRINST usr/include/linux/kexec.h
+  HDRINST usr/include/linux/if.h
+  HDRINST usr/include/linux/rfkill.h
+  HDRINST usr/include/linux/irqnr.h
+  HDRINST usr/include/linux/fsl_mc.h
+  HDRINST usr/include/linux/nvram.h
+  HDRINST usr/include/linux/pr.h
+  HDRINST usr/include/linux/seg6_genl.h
+  HDRINST usr/include/linux/dma-buf.h
+  HDRINST usr/include/linux/taskstats.h
+  HDRINST usr/include/linux/hdlcdrv.h
+  HDRINST usr/include/linux/nvme_ioctl.h
+  HDRINST usr/include/linux/mroute6.h
+  HDRINST usr/include/linux/mei_uuid.h
+  HDRINST usr/include/linux/keyctl.h
+  HDRINST usr/include/linux/acrn.h
+  HDRINST usr/include/linux/mdio.h
+  HDRINST usr/include/linux/if_packet.h
+  HDRINST usr/include/linux/packet_diag.h
+  HDRINST usr/include/linux/genetlink.h
+  HDRINST usr/include/linux/switchtec_ioctl.h
+  HDRINST usr/include/linux/qemu_fw_cfg.h
+  HDRINST usr/include/linux/pfrut.h
+  HDRINST usr/include/linux/memfd.h
+  HDRINST usr/include/linux/vfio_zdev.h
+  HDRINST usr/include/linux/netfilter_ipv6/ip6t_ipv6header.h
+  HDRINST usr/include/linux/netfilter_ipv6/ip6t_ah.h
+  HDRINST usr/include/linux/netfilter_ipv6/ip6t_mh.h
+  HDRINST usr/include/linux/netfilter_ipv6/ip6t_hl.h
+  HDRINST usr/include/linux/netfilter_ipv6/ip6t_frag.h
+  HDRINST usr/include/linux/netfilter_ipv6/ip6t_REJECT.h
+  HDRINST usr/include/linux/netfilter_ipv6/ip6t_HL.h
+  HDRINST usr/include/linux/netfilter_ipv6/ip6t_NPT.h
+  HDRINST usr/include/linux/netfilter_ipv6/ip6t_LOG.h
+  HDRINST usr/include/linux/netfilter_ipv6/ip6_tables.h
+  HDRINST usr/include/linux/netfilter_ipv6/ip6t_opts.h
+  HDRINST usr/include/linux/netfilter_ipv6/ip6t_rt.h
+  HDRINST usr/include/linux/netfilter_ipv6/ip6t_srh.h
+  HDRINST usr/include/linux/smiapp.h
+  HDRINST usr/include/linux/counter.h
+  HDRINST usr/include/linux/sound.h
+  HDRINST usr/include/linux/lwtunnel.h
+  HDRINST usr/include/linux/vfio_ccw.h
+  HDRINST usr/include/linux/cn_proc.h
+  HDRINST usr/include/linux/un.h
+  HDRINST usr/include/linux/kcmp.h
+  HDRINST usr/include/linux/inet_diag.h
+  HDRINST usr/include/linux/fdreg.h
+  HDRINST usr/include/linux/magic.h
+  HOSTLD  scripts/mod/modpost
+  HDRINST usr/include/linux/if_macsec.h
+  HDRINST usr/include/linux/l2tp.h
+  HDRINST usr/include/linux/kd.h
+  HDRINST usr/include/linux/keyboard.h
+  HDRINST usr/include/linux/cycx_cfm.h
+  HDRINST usr/include/linux/lirc.h
+  HDRINST usr/include/linux/rxrpc.h
+  HDRINST usr/include/linux/cgroupstats.h
+  HDRINST usr/include/linux/v4l2-mediabus.h
+  HDRINST usr/include/linux/psci.h
+  HDRINST usr/include/linux/prctl.h
+  HDRINST usr/include/linux/if_team.h
+  HDRINST usr/include/linux/fd.h
+  HDRINST usr/include/linux/sock_diag.h
+  HDRINST usr/include/linux/fiemap.h
+  HDRINST usr/include/linux/bpf.h
+  CC      kernel/bounds.s
+  CHKSHA1 include/linux/atomic/atomic-arch-fallback.h
+  UPD     include/generated/timeconst.h
+  CHKSHA1 include/linux/atomic/atomic-instrumented.h
+  HDRINST usr/include/linux/msg.h
+  HDRINST usr/include/linux/i8k.h
+  CHKSHA1 include/linux/atomic/atomic-long.h
+  HDRINST usr/include/linux/tps6594_pfsm.h
+  HDRINST usr/include/linux/wwan.h
+  HDRINST usr/include/linux/netfilter_ipv4/ipt_CLUSTERIP.h
+  HDRINST usr/include/linux/netfilter_ipv4/ip_tables.h
+  HDRINST usr/include/linux/netfilter_ipv4/ipt_ecn.h
+  HDRINST usr/include/linux/netfilter_ipv4/ipt_TTL.h
+  HDRINST usr/include/linux/netfilter_ipv4/ipt_REJECT.h
+  HDRINST usr/include/linux/netfilter_ipv4/ipt_ECN.h
+  HDRINST usr/include/linux/netfilter_ipv4/ipt_ah.h
+  HDRINST usr/include/linux/netfilter_ipv4/ipt_LOG.h
+  HDRINST usr/include/linux/netfilter_ipv4/ipt_ttl.h
+  HDRINST usr/include/linux/virtio_balloon.h
+  HDRINST usr/include/linux/exfat.h
+  HDRINST usr/include/linux/vsockmon.h
+  HDRINST usr/include/linux/usb/g_printer.h
+  HDRINST usr/include/linux/usb/cdc.h
+  HDRINST usr/include/linux/usb/midi.h
+  HDRINST usr/include/linux/usb/tmc.h
+  HDRINST usr/include/linux/usb/video.h
+  HDRINST usr/include/linux/usb/g_uvc.h
+  HDRINST usr/include/linux/usb/ch11.h
+  HDRINST usr/include/linux/usb/raw_gadget.h
+  HDRINST usr/include/linux/usb/android_accessory.h
+  HDRINST usr/include/linux/usb/gadgetfs.h
+  HDRINST usr/include/linux/usb/cdc-wdm.h
+  UPD     include/generated/bounds.h
+  HDRINST usr/include/linux/usb/charger.h
+  HDRINST usr/include/linux/usb/audio.h
+  CC      arch/arm64/kernel/asm-offsets.s
+  HDRINST usr/include/linux/usb/ch9.h
+  HDRINST usr/include/linux/usb/functionfs.h
+  HDRINST usr/include/linux/atmioc.h
+  HDRINST usr/include/linux/android_fuse.h
+  HDRINST usr/include/linux/psample.h
+  HDRINST usr/include/linux/cifs/cifs_mount.h
+  HDRINST usr/include/linux/cifs/cifs_netlink.h
+  HDRINST usr/include/linux/smc_diag.h
+  HDRINST usr/include/linux/coff.h
+  HDRINST usr/include/linux/target_core_user.h
+  HDRINST usr/include/linux/bpf_common.h
+  HDRINST usr/include/linux/ethtool.h
+  HDRINST usr/include/linux/nbd-netlink.h
+  HDRINST usr/include/linux/pkt_sched.h
+  HDRINST usr/include/linux/userio.h
+  HDRINST usr/include/linux/hidraw.h
+  HDRINST usr/include/linux/pfkeyv2.h
+  HDRINST usr/include/linux/mtio.h
+  HDRINST usr/include/linux/kernel-page-flags.h
+  HDRINST usr/include/linux/netfilter_ipv6.h
+  HDRINST usr/include/linux/ipmi_bmc.h
+  HDRINST usr/include/linux/fanotify.h
+  HDRINST usr/include/linux/v4l2-common.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_nflog.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_among.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_nat.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_log.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_stp.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_redirect.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_limit.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_mark_t.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_ip6.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_arp.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_mark_m.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_pkttype.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_vlan.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_802_3.h
+  HDRINST usr/include/linux/netfilter_bridge/ebtables.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_ip.h
+  HDRINST usr/include/linux/netfilter_bridge/ebt_arpreply.h
+  HDRINST usr/include/linux/am437x-vpfe.h
+  HDRINST usr/include/linux/cryptouser.h
+  HDRINST usr/include/linux/pktcdvd.h
+  HDRINST usr/include/linux/utsname.h
+  HDRINST usr/include/linux/agpgart.h
+  HDRINST usr/include/linux/pcitest.h
+  HDRINST usr/include/linux/ioam6_iptunnel.h
+  HDRINST usr/include/linux/if_x25.h
+  HDRINST usr/include/linux/arm_sdei.h
+  HDRINST usr/include/linux/inotify.h
+  HDRINST usr/include/linux/usbdevice_fs.h
+  HDRINST usr/include/linux/time.h
+  HDRINST usr/include/linux/route.h
+  HDRINST usr/include/linux/auxvec.h
+  HDRINST usr/include/linux/max2175.h
+  HDRINST usr/include/linux/fadvise.h
+  HDRINST usr/include/linux/seg6_local.h
+  HDRINST usr/include/linux/capability.h
+  HDRINST usr/include/linux/mmc/ioctl.h
+  HDRINST usr/include/linux/uuid.h
+  HDRINST usr/include/linux/net_namespace.h
+  HDRINST usr/include/linux/netfilter/xt_IDLETIMER.h
+  HDRINST usr/include/linux/netfilter/xt_pkttype.h
+  HDRINST usr/include/linux/netfilter/xt_addrtype.h
+  HDRINST usr/include/linux/netfilter/xt_iprange.h
+  HDRINST usr/include/linux/netfilter/xt_CHECKSUM.h
+  HDRINST usr/include/linux/netfilter/nfnetlink_conntrack.h
+  HDRINST usr/include/linux/netfilter/xt_conntrack.h
+  HDRINST usr/include/linux/netfilter/xt_AUDIT.h
+  HDRINST usr/include/linux/netfilter/xt_l2tp.h
+  HDRINST usr/include/linux/netfilter/xt_connlabel.h
+  HDRINST usr/include/linux/netfilter/xt_state.h
+  HDRINST usr/include/linux/netfilter/xt_owner.h
+  HDRINST usr/include/linux/netfilter/nf_nat.h
+  HDRINST usr/include/linux/netfilter/nfnetlink_queue.h
+  HDRINST usr/include/linux/netfilter/xt_connlimit.h
+  HDRINST usr/include/linux/netfilter/nf_tables.h
+  HDRINST usr/include/linux/netfilter/nfnetlink_acct.h
+  HDRINST usr/include/linux/netfilter/xt_connbytes.h
+  HDRINST usr/include/linux/netfilter/xt_socket.h
+  HDRINST usr/include/linux/netfilter/nf_tables_compat.h
+  HDRINST usr/include/linux/netfilter/xt_tcpmss.h
+  HDRINST usr/include/linux/netfilter/xt_TEE.h
+  HDRINST usr/include/linux/netfilter/nf_synproxy.h
+  HDRINST usr/include/linux/netfilter/xt_recent.h
+  HDRINST usr/include/linux/netfilter/nf_log.h
+  HDRINST usr/include/linux/netfilter/xt_time.h
+  HDRINST usr/include/linux/netfilter/xt_ipcomp.h
+  HDRINST usr/include/linux/netfilter/xt_sctp.h
+  HDRINST usr/include/linux/netfilter/xt_cgroup.h
+  HDRINST usr/include/linux/netfilter/xt_CONNMARK.h
+  HDRINST usr/include/linux/netfilter/nfnetlink_cttimeout.h
+  HDRINST usr/include/linux/netfilter/nf_conntrack_sctp.h
+  HDRINST usr/include/linux/netfilter/nfnetlink_log.h
+  HDRINST usr/include/linux/netfilter/xt_CLASSIFY.h
+  HDRINST usr/include/linux/netfilter/xt_limit.h
+  HDRINST usr/include/linux/netfilter/xt_RATEEST.h
+  HDRINST usr/include/linux/netfilter/xt_osf.h
+  HDRINST usr/include/linux/netfilter/xt_ipvs.h
+  HDRINST usr/include/linux/netfilter/xt_esp.h
+  HDRINST usr/include/linux/netfilter/nf_conntrack_common.h
+  HDRINST usr/include/linux/netfilter/xt_DSCP.h
+  HDRINST usr/include/linux/netfilter/nf_conntrack_tcp.h
+  HDRINST usr/include/linux/netfilter/x_tables.h
+  HDRINST usr/include/linux/netfilter/xt_rateest.h
+  HDRINST usr/include/linux/netfilter/xt_length.h
+  HDRINST usr/include/linux/netfilter/xt_nfacct.h
+  HDRINST usr/include/linux/netfilter/xt_NFLOG.h
+  HDRINST usr/include/linux/netfilter/xt_helper.h
+  HDRINST usr/include/linux/netfilter/nfnetlink_hook.h
+  HDRINST usr/include/linux/netfilter/xt_cpu.h
+  HDRINST usr/include/linux/netfilter/xt_cluster.h
+  HDRINST usr/include/linux/netfilter/xt_statistic.h
+  HDRINST usr/include/linux/netfilter/xt_tcpudp.h
+  HDRINST usr/include/linux/netfilter/xt_bpf.h
+  HDRINST usr/include/linux/netfilter/xt_realm.h
+  HDRINST usr/include/linux/netfilter/xt_TPROXY.h
+  HDRINST usr/include/linux/netfilter/xt_SECMARK.h
+  HDRINST usr/include/linux/netfilter/xt_SYNPROXY.h
+  HDRINST usr/include/linux/netfilter/xt_CONNSECMARK.h
+  HDRINST usr/include/linux/netfilter/xt_CT.h
+  HDRINST usr/include/linux/netfilter/xt_MARK.h
+  HDRINST usr/include/linux/netfilter/xt_LED.h
+  HDRINST usr/include/linux/netfilter/nfnetlink_cthelper.h
+  HDRINST usr/include/linux/netfilter/nfnetlink.h
+  HDRINST usr/include/linux/netfilter/xt_ecn.h
+  HDRINST usr/include/linux/netfilter/xt_multiport.h
+  HDRINST usr/include/linux/netfilter/nfnetlink_compat.h
+  HDRINST usr/include/linux/netfilter/xt_rpfilter.h
+  HDRINST usr/include/linux/netfilter/xt_set.h
+  HDRINST usr/include/linux/netfilter/nfnetlink_osf.h
+  HDRINST usr/include/linux/netfilter/xt_string.h
+  HDRINST usr/include/linux/netfilter/xt_TCPMSS.h
+  HDRINST usr/include/linux/netfilter/xt_comment.h
+  HDRINST usr/include/linux/netfilter/xt_hashlimit.h
+  HDRINST usr/include/linux/netfilter/xt_mac.h
+  HDRINST usr/include/linux/netfilter/nf_conntrack_tuple_common.h
+  HDRINST usr/include/linux/netfilter/xt_physdev.h
+  HDRINST usr/include/linux/netfilter/xt_TCPOPTSTRIP.h
+  HDRINST usr/include/linux/netfilter/xt_dccp.h
+  HDRINST usr/include/linux/netfilter/xt_connmark.h
+  HDRINST usr/include/linux/netfilter/xt_LOG.h
+  HDRINST usr/include/linux/netfilter/xt_mark.h
+  HDRINST usr/include/linux/netfilter/xt_HMARK.h
+  HDRINST usr/include/linux/netfilter/xt_policy.h
+  HDRINST usr/include/linux/netfilter/xt_quota.h
+  HDRINST usr/include/linux/netfilter/xt_u32.h
+  HDRINST usr/include/linux/netfilter/nf_conntrack_ftp.h
+  HDRINST usr/include/linux/netfilter/xt_NFQUEUE.h
+  HDRINST usr/include/linux/netfilter/xt_devgroup.h
+  HDRINST usr/include/linux/netfilter/xt_dscp.h
+  HDRINST usr/include/linux/netfilter/ipset/ip_set_bitmap.h
+  HDRINST usr/include/linux/netfilter/ipset/ip_set_list.h
+  HDRINST usr/include/linux/netfilter/ipset/ip_set.h
+  HDRINST usr/include/linux/netfilter/ipset/ip_set_hash.h
+  HDRINST usr/include/linux/filter.h
+  HDRINST usr/include/linux/dlmconstants.h
+  HDRINST usr/include/linux/dw100.h
+  HDRINST usr/include/linux/tty_flags.h
+  HDRINST usr/include/linux/if_tunnel.h
+  HDRINST usr/include/linux/atm_tcp.h
+  HDRINST usr/include/linux/rkisp1-config.h
+  HDRINST usr/include/linux/dns_resolver.h
+  HDRINST usr/include/linux/ioam6_genl.h
+  HDRINST usr/include/linux/can/error.h
+  HDRINST usr/include/linux/can/netlink.h
+  HDRINST usr/include/linux/can/isotp.h
+  HDRINST usr/include/linux/can/j1939.h
+  HDRINST usr/include/linux/can/bcm.h
+  HDRINST usr/include/linux/can/gw.h
+  HDRINST usr/include/linux/can/raw.h
+  HDRINST usr/include/linux/can/vxcan.h
+  HDRINST usr/include/linux/virtio_blk.h
+  HDRINST usr/include/linux/i2c-dev.h
+  HDRINST usr/include/linux/atmsvc.h
+  HDRINST usr/include/linux/nitro_enclaves.h
+  HDRINST usr/include/linux/firewire-cdev.h
+  HDRINST usr/include/linux/dlm_plock.h
+  HDRINST usr/include/linux/raid/md_p.h
+  HDRINST usr/include/linux/raid/md_u.h
+  HDRINST usr/include/linux/incrementalfs.h
+  HDRINST usr/include/linux/xdp_diag.h
+  HDRINST usr/include/linux/times.h
+  HDRINST usr/include/linux/atalk.h
+  HDRINST usr/include/linux/kernel.h
+  HDRINST usr/include/linux/kvm.h
+  HDRINST usr/include/linux/ppp_defs.h
+  HDRINST usr/include/linux/ioprio.h
+  HDRINST usr/include/linux/ipv6_route.h
+  HDRINST usr/include/linux/nfs4.h
+  HDRINST usr/include/linux/wireless.h
+  HDRINST usr/include/linux/perf_event.h
+  HDRINST usr/include/linux/ax25.h
+  HDRINST usr/include/linux/errno.h
+  HDRINST usr/include/linux/param.h
+  HDRINST usr/include/linux/atmapi.h
+  HDRINST usr/include/linux/sonet.h
+  HDRINST usr/include/linux/sunrpc/debug.h
+  HDRINST usr/include/linux/connector.h
+  HDRINST usr/include/linux/ptrace.h
+  HDRINST usr/include/linux/rseq.h
+  HDRINST usr/include/linux/omap3isp.h
+  HDRINST usr/include/linux/isst_if.h
+  HDRINST usr/include/linux/btf.h
+  HDRINST usr/include/linux/netfilter.h
+  HDRINST usr/include/linux/vtpm_proxy.h
+  HDRINST usr/include/linux/aspeed-video.h
+  HDRINST usr/include/linux/bpf_perf_event.h
+  HDRINST usr/include/linux/termios.h
+  HDRINST usr/include/linux/sync_file.h
+  HDRINST usr/include/linux/media.h
+  HDRINST usr/include/linux/nl80211.h
+  HDRINST usr/include/linux/timerfd.h
+  HDRINST usr/include/linux/baycom.h
+  HDRINST usr/include/linux/dvb/dmx.h
+  HDRINST usr/include/linux/dvb/net.h
+  HDRINST usr/include/linux/dvb/frontend.h
+  HDRINST usr/include/linux/dvb/video.h
+  HDRINST usr/include/linux/dvb/version.h
+  HDRINST usr/include/linux/dvb/ca.h
+  HDRINST usr/include/linux/dvb/audio.h
+  HDRINST usr/include/linux/dvb/osd.h
+  HDRINST usr/include/linux/uhid.h
+  HDRINST usr/include/linux/if_ltalk.h
+  HDRINST usr/include/linux/btrfs.h
+  HDRINST usr/include/linux/virtio_ids.h
+  HDRINST usr/include/linux/if_ppp.h
+  HDRINST usr/include/linux/auto_fs.h
+  HDRINST usr/include/linux/capi.h
+  HDRINST usr/include/linux/ppdev.h
+  HDRINST usr/include/linux/hdreg.h
+  HDRINST usr/include/linux/netdev.h
+  HDRINST usr/include/linux/mpls_iptunnel.h
+  HDRINST usr/include/linux/unistd.h
+  HDRINST usr/include/linux/nubus.h
+  HDRINST usr/include/linux/seg6_iptunnel.h
+  HDRINST usr/include/linux/kfd_sysfs.h
+  HDRINST usr/include/linux/cramfs_fs.h
+  HDRINST usr/include/linux/rio_mport_cdev.h
+  HDRINST usr/include/linux/tipc.h
+  HDRINST usr/include/linux/if_xdp.h
+  HDRINST usr/include/linux/qnx4_fs.h
+  HDRINST usr/include/linux/if_pppol2tp.h
+  HDRINST usr/include/linux/ivtvfb.h
+  HDRINST usr/include/linux/rds.h
+  HDRINST usr/include/linux/um_timetravel.h
+  HDRINST usr/include/linux/sockios.h
+  HDRINST usr/include/linux/stddef.h
+  HDRINST usr/include/linux/fscrypt.h
+  HDRINST usr/include/linux/in_route.h
+  HDRINST usr/include/linux/stat.h
+  HDRINST usr/include/linux/cec-funcs.h
+  HDRINST usr/include/linux/synclink.h
+  HDRINST usr/include/linux/rio_cm_cdev.h
+  HDRINST usr/include/linux/ppp-ioctl.h
+  HDRINST usr/include/linux/xfrm.h
+  HDRINST usr/include/linux/nfs2.h
+  HDRINST usr/include/linux/if_arcnet.h
+  HDRINST usr/include/linux/misc/bcm_vk.h
+  HDRINST usr/include/linux/scif_ioctl.h
+  HDRINST usr/include/linux/vdpa.h
+  HDRINST usr/include/linux/if_eql.h
+  HDRINST usr/include/linux/pidfd.h
+  HDRINST usr/include/linux/aspeed-lpc-ctrl.h
+  HDRINST usr/include/linux/screen_info.h
+  HDRINST usr/include/linux/pci_regs.h
+  HDRINST usr/include/linux/nfsacl.h
+  HDRINST usr/include/linux/netfilter_arp.h
+  UPD     include/generated/asm-offsets.h
+  HDRINST usr/include/linux/comedi.h
+  CALL    scripts/checksyscalls.sh
+  HDRINST usr/include/linux/sed-opal.h
+  HDRINST usr/include/linux/virtio_input.h
+  HDRINST usr/include/linux/nl80211-vnd-intel.h
+  HDRINST usr/include/linux/ipc.h
+  HDRINST usr/include/linux/aio_abi.h
+  HDRINST usr/include/linux/jffs2.h
+  HDRINST usr/include/linux/remoteproc_cdev.h
+  HDRINST usr/include/linux/virtio_gpu.h
+  HDRINST usr/include/linux/if_arp.h
+  HDRINST usr/include/linux/signal.h
+  HDRINST usr/include/linux/thermal.h
+  HDRINST usr/include/linux/bsg.h
+  HDRINST usr/include/linux/pg.h
+  HDRINST usr/include/linux/cxl_mem.h
+  LDS     arch/arm64/kernel/vdso/vdso.lds
+  HDRINST usr/include/linux/tipc_config.h
+  HDRINST usr/include/linux/if_link.h
+  CC      arch/arm64/kernel/vdso/vgettimeofday.o
+  AS      arch/arm64/kernel/vdso/note.o
+  HDRINST usr/include/linux/tdx-guest.h
+  HDRINST usr/include/linux/qrtr.h
+  AS      arch/arm64/kernel/vdso/sigreturn.o
+  HDRINST usr/include/linux/falloc.h
+  HDRINST usr/include/linux/kdev_t.h
+  HDRINST usr/include/linux/batadv_packet.h
+  HDRINST usr/include/linux/nilfs2_api.h
+  HDRINST usr/include/linux/ppp-comp.h
+  HDRINST usr/include/linux/mroute.h
+  HDRINST usr/include/linux/dlm_device.h
+  HDRINST usr/include/linux/ioam6.h
+  HDRINST usr/include/linux/pkt_cls.h
+  HDRINST usr/include/linux/watchdog.h
+  HDRINST usr/include/linux/ptp_clock.h
+  HDRINST usr/include/linux/netconf.h
+  HDRINST usr/include/linux/virtio_types.h
+  HDRINST usr/include/linux/kfd_ioctl.h
+  HDRINST usr/include/linux/v4l2-subdev.h
+  HDRINST usr/include/linux/nfs_idmap.h
+  HDRINST usr/include/linux/elf-fdpic.h
+  HDRINST usr/include/linux/serial_reg.h
+  HDRINST usr/include/linux/atm_he.h
+  HDRINST usr/include/linux/virtio_rng.h
+  HDRINST usr/include/linux/efs_fs_sb.h
+  HDRINST usr/include/linux/userfaultfd.h
+  HDRINST usr/include/linux/auto_fs4.h
+  HDRINST usr/include/linux/batman_adv.h
+  HDRINST usr/include/linux/fuse.h
+  HDRINST usr/include/linux/soundcard.h
+  HDRINST usr/include/linux/i2o-dev.h
+  HDRINST usr/include/linux/uio.h
+  LD      arch/arm64/kernel/vdso/vdso.so.dbg
+  HDRINST usr/include/linux/igmp.h
+  HDRINST usr/include/linux/rpl_iptunnel.h
+  HDRINST usr/include/linux/adb.h
+  HDRINST usr/include/linux/virtio_pmem.h
+  HDRINST usr/include/linux/posix_acl.h
+  HDRINST usr/include/linux/phantom.h
+  HDRINST usr/include/linux/hw_breakpoint.h
+/bin/sh: 1: llvm-readelf: not found
+  HDRINST usr/include/linux/gunyah.h
+  HDRINST usr/include/linux/eventpoll.h
+  VDSOSYM include/generated/vdso-offsets.h
+/bin/sh: 1: llvm-nm: not found
+  OBJCOPY arch/arm64/kernel/vdso/vdso.so
+  HDRINST usr/include/linux/hdlc.h
+  HDRINST usr/include/linux/trace_mmap.h
+  HDRINST usr/include/linux/firewire-constants.h
+  HDRINST usr/include/linux/usbip.h
+  HDRINST usr/include/linux/serio.h
+  HDRINST usr/include/linux/ipsec.h
+  HDRINST usr/include/linux/hash_info.h
+  HDRINST usr/include/linux/coda.h
+  HDRINST usr/include/linux/netfilter_ipv4.h
+  HDRINST usr/include/linux/bcm933xx_hcs.h
+  HDRINST usr/include/linux/atmbr2684.h
+  HDRINST usr/include/linux/bfs_fs.h
+  HDRINST usr/include/linux/fsmap.h
+  HDRINST usr/include/linux/watch_queue.h
+  HDRINST usr/include/linux/edd.h
+  HDRINST usr/include/linux/rpmsg.h
+  HDRINST usr/include/linux/x25.h
+  HDRINST usr/include/linux/seccomp.h
+  HDRINST usr/include/linux/poll.h
+  HDRINST usr/include/linux/surface_aggregator/dtx.h
+  HDRINST usr/include/linux/surface_aggregator/cdev.h
+  HDRINST usr/include/linux/dccp.h
+  HDRINST usr/include/linux/gsmmux.h
+  HDRINST usr/include/linux/vt.h
+  HDRINST usr/include/linux/nexthop.h
+  HDRINST usr/include/linux/fpga-dfl.h
+  HDRINST usr/include/linux/membarrier.h
+  HDRINST usr/include/linux/dm-ioctl.h
+  HDRINST usr/include/linux/vfio.h
+  HDRINST usr/include/linux/tcp_metrics.h
+  HDRINST usr/include/linux/hid.h
+  HDRINST usr/include/linux/sysinfo.h
+  HDRINST usr/include/linux/openat2.h
+  HDRINST usr/include/linux/mctp.h
+  HDRINST usr/include/linux/fcntl.h
+  HDRINST usr/include/linux/gen_stats.h
+  HDRINST usr/include/linux/nfs_fs.h
+  HDRINST usr/include/linux/ublk_cmd.h
+  HDRINST usr/include/linux/ncsi.h
+  HDRINST usr/include/linux/map_to_14segment.h
+  HDRINST usr/include/linux/socket.h
+  HDRINST usr/include/linux/virtio_vsock.h
+  HDRINST usr/include/linux/if_ether.h
+  HDRINST usr/include/linux/xilinx-v4l2-controls.h
+  HDRINST usr/include/linux/mii.h
+  HDRINST usr/include/linux/errqueue.h
+  HDRINST usr/include/linux/virtio_iommu.h
+  HDRINST usr/include/linux/hpet.h
+  HDRINST usr/include/linux/hsi/cs-protocol.h
+  HDRINST usr/include/linux/hsi/hsi_char.h
+  HDRINST usr/include/linux/mptcp.h
+  HDRINST usr/include/linux/toshiba.h
+  HDRINST usr/include/linux/fib_rules.h
+  HDRINST usr/include/linux/parport.h
+  HDRINST usr/include/linux/virtio_ring.h
+  HDRINST usr/include/linux/const.h
+  HDRINST usr/include/linux/serial.h
+  HDRINST usr/include/linux/netrom.h
+  HDRINST usr/include/linux/vm_sockets_diag.h
+  HDRINST usr/include/linux/llc.h
+  HDRINST usr/include/linux/android/binderfs.h
+  HDRINST usr/include/linux/android/binder.h
+  HDRINST usr/include/linux/tcp.h
+  HDRINST usr/include/linux/ip.h
+  HDRINST usr/include/linux/ip6_tunnel.h
+  HDRINST usr/include/linux/tiocl.h
+  HDRINST usr/include/linux/neighbour.h
+  HDRINST usr/include/linux/io_uring.h
+  HDRINST usr/include/linux/atm_zatm.h
+  HDRINST usr/include/linux/ipmi_ssif_bmc.h
+  HDRINST usr/include/linux/vduse.h
+  HDRINST usr/include/linux/videodev2.h
+  HDRINST usr/include/linux/cfm_bridge.h
+  HDRINST usr/include/linux/dm-log-userspace.h
+  HDRINST usr/include/linux/cdrom.h
+  HDRINST usr/include/linux/virtio_fs.h
+  HDRINST usr/include/linux/can.h
+  HDRINST usr/include/linux/if_addrlabel.h
+  HDRINST usr/include/linux/hdlc/ioctl.h
+  HDRINST usr/include/linux/atm_nicstar.h
+  HDRINST usr/include/linux/zorro.h
+  HDRINST usr/include/linux/snmp.h
+  HDRINST usr/include/linux/tc_act/tc_nat.h
+  HDRINST usr/include/linux/tc_act/tc_defact.h
+  HDRINST usr/include/linux/tc_act/tc_mpls.h
+  HDRINST usr/include/linux/tc_act/tc_skbedit.h
+  HDRINST usr/include/linux/tc_act/tc_vlan.h
+  HDRINST usr/include/linux/tc_act/tc_pedit.h
+  HDRINST usr/include/linux/tc_act/tc_ctinfo.h
+  HDRINST usr/include/linux/tc_act/tc_bpf.h
+  HDRINST usr/include/linux/tc_act/tc_gact.h
+  HDRINST usr/include/linux/tc_act/tc_ipt.h
+  HDRINST usr/include/linux/tc_act/tc_gate.h
+  HDRINST usr/include/linux/tc_act/tc_mirred.h
+  HDRINST usr/include/linux/tc_act/tc_csum.h
+  HDRINST usr/include/linux/tc_act/tc_tunnel_key.h
+  HDRINST usr/include/linux/tc_act/tc_skbmod.h
+  HDRINST usr/include/linux/tc_act/tc_ct.h
+  HDRINST usr/include/linux/tc_act/tc_connmark.h
+  HDRINST usr/include/linux/tc_act/tc_ife.h
+  HDRINST usr/include/linux/tc_act/tc_sample.h
+  HDRINST usr/include/linux/rose.h
+  HDRINST usr/include/linux/dcbnl.h
+  HDRINST usr/include/linux/reiserfs_fs.h
+  HDRINST usr/include/linux/minix_fs.h
+  HDRINST usr/include/linux/gtp.h
+  LDS     arch/arm64/kernel/vdso32/vdso.lds
+  CC32    arch/arm64/kernel/vdso32/note.o
+  CC32    arch/arm64/kernel/vdso32/vgettimeofday.o
+  HDRINST usr/include/linux/tty.h
+  HDRINST usr/include/linux/wmi.h
+  HDRINST usr/include/linux/in6.h
+  HDRINST usr/include/linux/rtnetlink.h
+  HOSTCC  arch/arm64/kernel/vdso32/../../../arm/vdso/vdsomunge
+  HDRINST usr/include/linux/coresight-stm.h
+  HDRINST usr/include/linux/ipv6.h
+  HDRINST usr/include/linux/genwqe/genwqe_card.h
+  HDRINST usr/include/linux/time_types.h
+  HDRINST usr/include/linux/atmclip.h
+  HDRINST usr/include/linux/if_fddi.h
+  HDRINST usr/include/linux/patchkey.h
+  HDRINST usr/include/linux/if_cablemodem.h
+  HDRINST usr/include/linux/cciss_ioctl.h
+  HDRINST usr/include/linux/amt.h
+  HDRINST usr/include/linux/mpls.h
+  HDRINST usr/include/linux/cec.h
+  HDRINST usr/include/misc/fastrpc.h
+  HDRINST usr/include/misc/cxl.h
+  HDRINST usr/include/misc/pvpanic.h
+  HDRINST usr/include/misc/uacce/hisi_qm.h
+  HDRINST usr/include/misc/uacce/uacce.h
+  HDRINST usr/include/misc/ocxl.h
+  HDRINST usr/include/misc/xilinx_sdfec.h
+  HDRINST usr/include/mtd/mtd-abi.h
+  HDRINST usr/include/mtd/mtd-user.h
+  HDRINST usr/include/mtd/inftl-user.h
+  HDRINST usr/include/mtd/ubi-user.h
+  HDRINST usr/include/mtd/nftl-user.h
+  HDRINST usr/include/rdma/siw-abi.h
+  HDRINST usr/include/rdma/mlx5_user_ioctl_verbs.h
+  HDRINST usr/include/rdma/rdma_user_cm.h
+  HDRINST usr/include/rdma/bnxt_re-abi.h
+  HDRINST usr/include/rdma/mthca-abi.h
+  HDRINST usr/include/rdma/rdma_user_ioctl_cmds.h
+  HDRINST usr/include/rdma/ib_user_mad.h
+  HDRINST usr/include/rdma/mana-abi.h
+  HDRINST usr/include/rdma/rvt-abi.h
+  HDRINST usr/include/rdma/ib_user_ioctl_cmds.h
+  HDRINST usr/include/rdma/vmw_pvrdma-abi.h
+  HDRINST usr/include/rdma/rdma_user_ioctl.h
+  HDRINST usr/include/rdma/rdma_netlink.h
+  HDRINST usr/include/rdma/hfi/hfi1_ioctl.h
+  HDRINST usr/include/rdma/hfi/hfi1_user.h
+  HDRINST usr/include/rdma/hns-abi.h
+  HDRINST usr/include/rdma/rdma_user_rxe.h
+  HDRINST usr/include/rdma/irdma-abi.h
+  LD32    arch/arm64/kernel/vdso32/vdso.so.raw
+  HDRINST usr/include/rdma/erdma-abi.h
+  HDRINST usr/include/rdma/ib_user_verbs.h
+  HDRINST usr/include/rdma/cxgb4-abi.h
+  HDRINST usr/include/rdma/ib_user_sa.h
+  HDRINST usr/include/rdma/efa-abi.h
+  HDRINST usr/include/rdma/mlx4-abi.h
+  HDRINST usr/include/rdma/qedr-abi.h
+/bin/sh: 1: llvm-readelf: not found
+  MUNGE   arch/arm64/kernel/vdso32/vdso.so.dbg
+  HDRINST usr/include/rdma/ocrdma-abi.h
+  HDRINST usr/include/rdma/mlx5_user_ioctl_cmds.h
+  HDRINST usr/include/rdma/mlx5-abi.h
+  HDRINST usr/include/rdma/ib_user_ioctl_verbs.h
+  VDSOSYM include/generated/vdso32-offsets.h
+/bin/sh: 1: llvm-nm: not found
+  OBJCOPY arch/arm64/kernel/vdso32/vdso.so
+  HDRINST usr/include/scsi/fc/fc_els.h
+  HDRINST usr/include/scsi/fc/fc_fs.h
+  HDRINST usr/include/scsi/fc/fc_ns.h
+  HDRINST usr/include/scsi/fc/fc_gs.h
+  HDRINST usr/include/scsi/scsi_netlink_fc.h
+  HDRINST usr/include/scsi/scsi_netlink.h
+  HDRINST usr/include/scsi/scsi_bsg_ufs.h
+  HDRINST usr/include/scsi/cxlflash_ioctl.h
+  HDRINST usr/include/scsi/scsi_bsg_fc.h
+  HDRINST usr/include/scsi/scsi_bsg_mpi3mr.h
+  HDRINST usr/include/sound/intel/avs/tokens.h
+  HDRINST usr/include/sound/skl-tplg-interface.h
+  HDRINST usr/include/sound/compress_params.h
+  HDRINST usr/include/sound/asequencer.h
+  HDRINST usr/include/sound/snd_ar_tokens.h
+  HDRINST usr/include/sound/hdspm.h
+  HDRINST usr/include/sound/sb16_csp.h
+  HDRINST usr/include/sound/emu10k1.h
+  HDRINST usr/include/sound/compress_offload.h
+  HDRINST usr/include/sound/sfnt_info.h
+  HDRINST usr/include/sound/firewire.h
+  HDRINST usr/include/sound/asoc.h
+  HDRINST usr/include/sound/usb_stream.h
+  HDRINST usr/include/sound/tlv.h
+  HDRINST usr/include/sound/snd_sst_tokens.h
+  HDRINST usr/include/sound/asound_fm.h
+  HDRINST usr/include/sound/sof/tokens.h
+  HDRINST usr/include/sound/sof/header.h
+  HDRINST usr/include/sound/sof/fw.h
+  HDRINST usr/include/sound/sof/abi.h
+  HDRINST usr/include/sound/asound.h
+  HDRINST usr/include/sound/hdsp.h
+  HDRINST usr/include/video/edid.h
+  HDRINST usr/include/video/sisfb.h
+  HDRINST usr/include/video/uvesafb.h
+  HDRINST usr/include/xen/gntdev.h
+  HDRINST usr/include/xen/evtchn.h
+  HDRINST usr/include/xen/privcmd.h
+  HDRINST usr/include/xen/gntalloc.h
+  HDRINST usr/include/linux/version.h
+  HDRINST usr/include/asm/posix_types.h
+  HDRINST usr/include/asm/ucontext.h
+  HDRINST usr/include/asm/mman.h
+  HDRINST usr/include/asm/statfs.h
+  HDRINST usr/include/asm/sigcontext.h
+  HDRINST usr/include/asm/perf_regs.h
+  HDRINST usr/include/asm/setup.h
+  HDRINST usr/include/asm/byteorder.h
+  HDRINST usr/include/asm/hwcap.h
+  HDRINST usr/include/asm/auxvec.h
+  HDRINST usr/include/asm/kvm.h
+  HDRINST usr/include/asm/param.h
+  HDRINST usr/include/asm/ptrace.h
+  HDRINST usr/include/asm/bpf_perf_event.h
+  HDRINST usr/include/asm/unistd.h
+  HDRINST usr/include/asm/sve_context.h
+  HDRINST usr/include/asm/signal.h
+  HDRINST usr/include/asm/fcntl.h
+  HDRINST usr/include/asm/bitsperlong.h
+  HDRINST usr/include/asm/shmbuf.h
+  HDRINST usr/include/asm/msgbuf.h
+  HDRINST usr/include/asm/resource.h
+  HDRINST usr/include/asm/swab.h
+  HDRINST usr/include/asm/types.h
+  HDRINST usr/include/asm/kvm_para.h
+  HDRINST usr/include/asm/ioctl.h
+  HDRINST usr/include/asm/ioctls.h
+  HDRINST usr/include/asm/errno.h
+  HDRINST usr/include/asm/termios.h
+  HDRINST usr/include/asm/sockios.h
+  HDRINST usr/include/asm/siginfo.h
+  HDRINST usr/include/asm/stat.h
+  HDRINST usr/include/asm/termbits.h
+  HDRINST usr/include/asm/poll.h
+  HDRINST usr/include/asm/ipcbuf.h
+  HDRINST usr/include/asm/socket.h
+  HDRINST usr/include/asm/sembuf.h
+  LDS     scripts/module.lds
+--- utsrelease.h ---
+#define UTS_RELEASE "6.6.77-android15-8-2755199-abogkiS9380ZCS9BZB2-4k"
+--- relevant config ---
+CONFIG_LOCALVERSION="-android15-8-2755199-abogkiS9380ZCS9BZB2-4k"
+CONFIG_LOCALVERSION_AUTO=y
+CONFIG_CFI_CLANG=y
+CONFIG_MODVERSIONS=y
+=== [4/6] fetch DFRoot v4.7 source ===
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+ 35  127k   35 45601    0     0   141k      0 --:--:-- --:--:-- --:--:--  141k100  127k  100  127k    0     0   387k      0 --:--:-- --:--:-- --:--:-- 6355k
+=== [5/6] build dfroot.ko against 6.6.77 ===
+make -C /home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/kernel M=/home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/dfroot/lkm \
+	ARCH=arm64 \
+	LLVM=1 \
+	modules
+make[1]: Entering directory '/home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/kernel'
+  CC [M]  /home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/dfroot/lkm/dfroot.o
+  MODPOST /home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/dfroot/lkm/Module.symvers
+WARNING: Module.symvers is missing.
+         Modules may not have dependencies or modversions.
+         You may get many unresolved symbol errors.
+         You can set KBUILD_MODPOST_WARN=1 to turn errors into warning
+         if you want to proceed at your own risk.
+ERROR: modpost: "snprintf" [/home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/dfroot/lkm/dfroot.ko] undefined!
+ERROR: modpost: "memset" [/home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/dfroot/lkm/dfroot.ko] undefined!
+ERROR: modpost: "register_kprobe" [/home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/dfroot/lkm/dfroot.ko] undefined!
+ERROR: modpost: "unregister_kprobe" [/home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/dfroot/lkm/dfroot.ko] undefined!
+ERROR: modpost: "_printk" [/home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/dfroot/lkm/dfroot.ko] undefined!
+ERROR: modpost: "__stack_chk_fail" [/home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/dfroot/lkm/dfroot.ko] undefined!
+ERROR: modpost: "module_layout" [/home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/dfroot/lkm/dfroot.ko] undefined!
+make[3]: *** [scripts/Makefile.modpost:211: /home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/dfroot/lkm/Module.symvers] Error 1
+make[2]: *** [/home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/kernel/Makefile:1916: modpost] Error 2
+make[1]: *** [Makefile:252: __sub-make] Error 2
+make[1]: Leaving directory '/home/runner/work/dfroot-s9380-zb2/dfroot-s9380-zb2/kernel'
+make: *** [Makefile:7: all] Error 2
