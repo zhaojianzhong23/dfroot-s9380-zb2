@@ -67,7 +67,7 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Fetch stock DFRoot v4.7, embed verified ksud, inject ko
+      - name: Fetch stock DFRoot v4.7, embed FinaSU official ksud, inject ko
         shell: bash
         run: |
           set -euo pipefail
@@ -76,7 +76,7 @@ jobs:
           mv DFRoot-4.7 dfroot
           echo "--- bootstrap: keep OFFICIAL original (no patch) ---"
           grep -c "restart_manager" dfroot/app/src/main/jni/bootstrap.c && echo "ERROR: patched bootstrap found" && exit 1 || echo "OK: official bootstrap, no restart patch"
-          echo "--- inject verified 4.5 ksud into jniLibs (makes DFRoot appear in dropdown) ---"
+          echo "--- inject FinaSU official ksud into jniLibs (S25U-compatible kernelsu.ko) ---"
           mkdir -p dfroot/app/src/main/jniLibs/arm64-v8a
           cp assets/libksud.so dfroot/app/src/main/jniLibs/arm64-v8a/libksud.so
           ls -l dfroot/app/src/main/jniLibs/arm64-v8a/libksud.so
@@ -101,7 +101,7 @@ jobs:
           printf 'KEYSTORE_FILE=../keystore.jks\nKEYSTORE_PASSWORD=df-ksu\nKEY_ALIAS=df-ksu\nKEY_PASSWORD=df-ksu\n' > signing.properties
           ./gradlew :app:assembleRelease --no-daemon --stacktrace
           mkdir -p "$GITHUB_WORKSPACE/out"
-          cp app/build/outputs/apk/release/DFRoot_*.apk "$GITHUB_WORKSPACE/out/DFRoot-4.7-S9380-ZB2-embedsud.apk"
+          cp app/build/outputs/apk/release/DFRoot_*.apk "$GITHUB_WORKSPACE/out/DFRoot-4.7-S9380-ZB2-embedsud-v5.apk"
           ls -lh "$GITHUB_WORKSPACE/out"
           echo BUILD_OK
 
@@ -114,6 +114,6 @@ jobs:
           git config user.email "ci@users.noreply.github.com"
           git add -f out/*.apk 2>/dev/null || true
           if ! git diff --cached --quiet; then
-            git commit -m "CI output: v4 embed-verified-ksud build"
+            git commit -m "CI output: v5 embed-FinaSU-official-ksud build"
             git push
           fi
