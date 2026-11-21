@@ -1,0 +1,30 @@
+name: Probe DDK
+on:
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ylarod/ddk-min:android15-6.6-20260828
+      options: --privileged
+    steps:
+      - name: Probe environment
+        run: |
+          echo "=== ENV ==="
+          env | grep -iE 'KDIR|KVER|KMI|KERNEL|DDK|SRC' | sort
+          echo "=== / listing ==="
+          ls -la /
+          echo "=== candidate Makefiles (SUBLEVEL) ==="
+          for f in $(find / -maxdepth 6 -name Makefile 2>/dev/null | head -40); do
+            if grep -q '^SUBLEVEL' "$f" 2>/dev/null; then
+              echo "--- $f"
+              grep -E '^(VERSION|PATCHLEVEL|SUBLEVEL|EXTRAVERSION|LOCALVERSION)' "$f" | head -8
+            fi
+          done
+          echo "=== Module.symvers locations ==="
+          find / -name Module.symvers 2>/dev/null | head -10
+          echo "=== utsrelease.h ==="
+          find / -name utsrelease.h 2>/dev/null | head -10 | while read f; do echo "--- $f"; cat "$f"; done
+          echo "=== which tools ==="
+          which clang llvm-objcopy make python3 2>/dev/null
+          echo "PROBE DONE"
