@@ -1,0 +1,109 @@
+name: Build DFRoot 4.7 for S9380 ZB2 (DDK full-symbol)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-lkm:
+    name: Build LKM in official DDK container
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ylarod/ddk-min:android15-6.6-20260828
+      options: --privileged
+    steps:
+      - name: Fetch DFRoot v4.7 source and build ko with full kernel tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "KDIR=$KDIR"
+          ls -l "$KDIR/Module.symvers"
+          python3 -c "import urllib.request; urllib.request.urlretrieve('https://github.com/diabl0w/DFRoot/archive/refs/tags/v4.7.tar.gz','/tmp/df.tgz')"
+          mkdir -p /tmp/dfsrc && tar xzf /tmp/df.tgz -C /tmp/dfsrc
+          cd /tmp/dfsrc/DFRoot-4.7/lkm
+          echo "--- lkm/Makefile ---"
+          cat Makefile
+          make -j"$(nproc)"
+          llvm-objcopy --strip-unneeded \
+            -R .comment -R .note.gnu.build-id -R .note.gnu.property \
+            -R .note.Linux -R .note.GNU-stack \
+            -R .BTF -R .BTF.base -R .llvm_addrsig \
+            -R .hyp.text -R .hyp.bss -R .hyp.rodata -R .hyp.event_ids \
+            -R .hyp.patchable_function_entries -R .hyp.data dfroot.ko
+          echo "--- built ko ---"
+          ls -l dfroot.ko
+          strings dfroot.ko | grep -E 'vermagic|^name=' || true
+          echo "--- undefined symbols check (should be none) ---"
+          llvm-nm -u dfroot.ko 2>/dev/null | head -30 || true
+          mkdir -p "$GITHUB_WORKSPACE/artifacts"
+          cp dfroot.ko "$GITHUB_WORKSPACE/artifacts/dfroot-android15-6.6.ko"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dfroot-ko
+          path: artifacts/*.ko
+
+  build-apk:
+    name: Assemble signed APK
+    needs: build-lkm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dfroot-ko
+          path: ko
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Fetch DFRoot v4.7 source and inject ko
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 -o df.tgz https://github.com/diabl0w/DFRoot/archive/refs/tags/v4.7.tar.gz
+          tar xzf df.tgz
+          mv DFRoot-4.7 dfroot
+          mkdir -p dfroot/app/src/main/jni/ko
+          cp ko/dfroot-android15-6.6.ko dfroot/app/src/main/jni/ko/dfroot-android15-6.6.ko
+          for k in android12-5.10 android13-5.10 android13-5.15 android14-5.15 android14-6.1 android16-6.12 android17-6.18; do
+            : > "dfroot/app/src/main/jni/ko/dfroot-$k.ko"
+          done
+          ls -l dfroot/app/src/main/jni/ko
+
+      - name: Build signed APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd dfroot
+          chmod +x gradlew
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          keytool -genkeypair -keystore keystore.jks -storetype JKS \
+            -storepass df-ksu -keypass df-ksu -alias df-ksu \
+            -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=DFRoot" -noprompt
+          printf 'KEYSTORE_FILE=../keystore.jks\nKEYSTORE_PASSWORD=df-ksu\nKEY_ALIAS=df-ksu\nKEY_PASSWORD=df-ksu\n' > signing.properties
+          ./gradlew :app:assembleRelease --no-daemon --stacktrace
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cp app/build/outputs/apk/release/DFRoot_*.apk "$GITHUB_WORKSPACE/out/DFRoot-4.7-S9380-ZB2.apk"
+          ls -lh "$GITHUB_WORKSPACE/out"
+          echo BUILD_OK
+
+      - name: Commit outputs
+        if: always()
+        shell: bash
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          git config user.name "ci"
+          git config user.email "ci@users.noreply.github.com"
+          git add -f out/*.apk 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "CI output: DDK full-symbol DFRoot build"
+          fi
+          git push
