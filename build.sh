@@ -34,7 +34,7 @@ mv DFRoot-4.7 dfroot
 
 echo "=== [5/6] build dfroot.ko against 6.6.77 ==="
 cd "$WS/dfroot/lkm"
-make KDIR="$WS/kernel" ARCH=arm64 LLVM=1 OBJCOPY=llvm-objcopy -j"$(nproc)"
+make KDIR="$WS/kernel" ARCH=arm64 LLVM=1 OBJCOPY=llvm-objcopy KBUILD_MODPOST_WARN=1 -j"$(nproc)"
 llvm-objcopy --strip-unneeded \
   -R .comment -R .note.gnu.build-id -R .note.gnu.property \
   -R .note.Linux -R .note.GNU-stack \
