@@ -1,0 +1,47 @@
+name: Build DFRoot 4.7 for S9380 ZB2
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq build-essential flex bison bc libssl-dev libelf-dev lz4 cpio kmod zip unzip binutils
+          sudo apt-get install -y -qq clang-18 llvm-18 lld-18
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100 || true
+          sudo update-alternatives --install /usr/bin/llvm-objcopy llvm-objcopy /usr/bin/llvm-objcopy-18 100 || true
+          sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-18 100 || true
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Build
+        shell: bash
+        run: bash build.sh 2>&1 | tee build.log
+
+      - name: Publish outputs
+        if: always()
+        shell: bash
+        run: |
+          git config user.name "ci"
+          git config user.email "ci@users.noreply.github.com"
+          git add -f build.log 2>/dev/null || true
+          git add -f out/*.apk 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "CI output: kernel 6.6.77 DFRoot build"
+          fi
+          git push
+          echo "----- build.log tail -----"
+          tail -50 build.log 2>/dev/null || true
