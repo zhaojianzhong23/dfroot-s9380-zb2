@@ -9,14 +9,14 @@
 #include <unistd.h>
 
 #define BLKROSET   0x125d
-#define KSUD_STAGE "/data/user_de/0/df.root/ksud"
+#define KSUD_STAGE "/data/user_de/0/df.root.bakasu/ksud"
 #define KSUD       "/data/adb/ksud"
-#define PREFS_PATH "/data/user_de/0/df.root/shared_prefs/dfroot.xml"
+#define PREFS_PATH "/data/user_de/0/df.root.bakasu/shared_prefs/dfroot.xml"
 #define MODULES_DIR "/data/adb/modules"
 /* BakaSU build: A-stage Samsung-patched kernelsu.ko (android15-6.6) staged by
  * ExploitRunner from our own assets. Loaded via `ksud insmod` before late-load,
  * so late-load sees has_kernelsu()=true and skips the daemon's embedded 6.12 ko. */
-#define KO_PATH "/data/user_de/0/df.root/kernelsu.ko"
+#define KO_PATH "/data/user_de/0/df.root.bakasu/kernelsu.ko"
 
 static int pref_true(const char *buf, const char *key)
 {
@@ -242,7 +242,7 @@ int main(void)
     static char manager_pkg[] = "org.bakasu.bakasu";
     /* auto-reinstall the BakaSU manager if the user uninstalled it.
      * APK staged by ExploitRunner to a predictable private path. */
-    static char mgr_apk[] = "/data/user_de/0/df.root/ksumgr.apk";
+    static char mgr_apk[] = "/data/user_de/0/df.root.bakasu/ksumgr.apk";
     if (access(mgr_apk, F_OK) == 0 && !manager_installed(manager_pkg)) {
         touch("/dev/dfm7");
         if (run_ctx("u:r:shell:s0", (char *[]){"/system/bin/pm", "install", "-r", mgr_apk, NULL}) == 0)

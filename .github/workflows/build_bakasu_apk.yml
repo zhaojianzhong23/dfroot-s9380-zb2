@@ -129,6 +129,13 @@ jobs:
           curl -fL --retry 3 -o df.tgz https://github.com/diabl0w/DFRoot/archive/refs/tags/v4.7.tar.gz
           tar xzf df.tgz
           mv DFRoot-4.7 dfroot
+
+          echo "--- rename: applicationId df.root.bakasu, label DFRoot BakaSU (namespace stays df.root) ---"
+          sed -i 's/applicationId = "df.root"/applicationId = "df.root.bakasu"/' dfroot/app/build.gradle.kts
+          sed -i 's/android:label="DFRoot"/android:label="DFRoot BakaSU"/' dfroot/app/src/main/AndroidManifest.xml
+          grep -n "applicationId\|namespace" dfroot/app/build.gradle.kts
+          grep -n "android:label" dfroot/app/src/main/AndroidManifest.xml
+
           echo "--- BakaSU bootstrap: insmod 6.6 ko + late-load org.bakasu.bakasu ---"
           cp patch/bootstrap_bakasu.c dfroot/app/src/main/jni/bootstrap.c
           grep -n "org.bakasu.bakasu\|KO_PATH\|insmod\|dfka" dfroot/app/src/main/jni/bootstrap.c
