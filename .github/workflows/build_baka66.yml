@@ -1,0 +1,95 @@
+name: Build BakaSU 35285 kernelsu.ko for android15-6.6 (Samsung patch rebase)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-ko:
+    name: Build patched BakaSU ko in DDK android15-6.6 container
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ylarod/ddk-min:android15-6.6-20260828
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone BakaSU pinned commit and apply Samsung compat patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "KDIR=$KDIR"
+          ls -l "$KDIR/Module.symvers"
+          git clone --quiet https://github.com/Baka-SU/BakaSU.git /tmp/baka
+          cd /tmp/baka
+          git checkout --quiet 57b2db6076f439cfd489f14576444e8f0f2f0a25
+          echo "HEAD=$(git rev-parse HEAD) count=$(git rev-list --count HEAD)"
+          echo "UAPI=$(grep -o 'KERNEL_SU_UAPI_VERSION = [0-9]*' uapi/supercall.h | head -1)"
+          # Samsung compat patch (from xorpix/Root-My-Galaxy-Ultra) - already includes
+          # LINUX_VERSION_CODE branches for <6.12 (5.11/5.16 paths), so 6.6 is covered.
+          curl -fL --retry 3 -o /tmp/samsung.patch \
+            https://raw.githubusercontent.com/xorpix/Root-My-Galaxy-Ultra/main/backends/resukisu/samsung-compat-35285.patch
+          echo "patch sha256: $(sha256sum /tmp/samsung.patch | cut -d' ' -f1)"
+          git apply --check /tmp/samsung.patch
+          git apply /tmp/samsung.patch
+          echo "PATCH_APPLIED_OK"
+
+      - name: Build kernelsu.ko with Samsung KDP/RKP/DEFEX enabled
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/baka/kernel
+          export PATH="/opt/ddk/clang/clang-r536225/bin:$PATH"
+          echo "--- compiler ---"
+          which clang && clang --version | head -2 || llvm-clang --version | head -2 || true
+          echo "--- build args (KDIR from DDK env, Samsung switches on) ---"
+          make KDIR="$KDIR" \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1 \
+            CONFIG_KSU=m \
+            CONFIG_KSU_SAMSUNG_KDP=y \
+            CONFIG_KSU_SAMSUNG_RKP=y \
+            CONFIG_KSU_SAMSUNG_DEFEX=y \
+            CONFIG_KSU_TRACEPOINT_HOOK=y \
+            CONFIG_KSU_MULTI_MANAGER_SUPPORT=y \
+            CONFIG_DEBUG_INFO_BTF_MODULES= \
+            modules -j"$(nproc)"
+          echo "--- built ---"
+          ls -l kernelsu.ko
+          echo "--- modinfo ---"
+          llvm-readelf -p .modinfo kernelsu.ko 2>/dev/null | grep -E 'vermagic|^ *name=|version' | head -10 || strings kernelsu.ko | grep -E 'vermagic=|^name=' | head -10
+          echo "--- undefined symbols (check_symbol already ran in make) ---"
+          llvm-nm -u kernelsu.ko 2>/dev/null | head -30 || true
+
+      - name: Package and upload artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/artifacts"
+          cp /tmp/baka/kernel/kernelsu.ko "$GITHUB_WORKSPACE/artifacts/bakaSU-35285-samsung-android15-6.6.ko"
+          cp /tmp/samsung.patch "$GITHUB_WORKSPACE/artifacts/samsung-compat-35285.patch"
+          echo "--- artifact ---"
+          ls -lh "$GITHUB_WORKSPACE/artifacts/"
+          sha256sum "$GITHUB_WORKSPACE/artifacts/bakaSU-35285-samsung-android15-6.6.ko"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: baka66-ko
+          path: artifacts/*
+
+      - name: Commit ko to out/baka66
+        shell: bash
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          mkdir -p out/baka66
+          cp artifacts/bakaSU-35285-samsung-android15-6.6.ko out/baka66/
+          git config user.name "CI Builder"
+          git config user.email "ci@local"
+          git add out/baka66/
+          if ! git diff --cached --quiet; then
+            git commit -m "CI output: BakaSU 35285 samsung-patched ko for android15-6.6"
+            git push
+          else
+            echo "no new ko to commit"
+          fi
