@@ -237,9 +237,13 @@ int main(void)
     }
 
     touch("/dev/dfm5");
-    /* BakaSU build: manager is org.bakasu.bakasu. late-load re-starts the
-     * package given by --package-name at the end, so pin it to BakaSU. */
-    static char manager_pkg[] = "org.bakasu.bakasu";
+    /* BakaSU build: the bundled APK is the real BakaSU official build (display
+     * name BakaSU, signature d3469712.. matches our ko static whitelist) from the
+     * Najip/KernelSU_SUSFS_Samsung_SM-A325X release. That fork keeps the legacy
+     * Android package id com.resukisu.resukisu even though it is BakaSU, so the
+     * install check and late-load --package-name must use the REAL package id,
+     * not org.bakasu.bakasu (which does not exist on device). */
+    static char manager_pkg[] = "com.resukisu.resukisu";
     /* auto-reinstall the BakaSU manager if the user uninstalled it.
      * APK staged by ExploitRunner to a predictable private path. */
     static char mgr_apk[] = "/data/user_de/0/df.root.bakasu/ksumgr.apk";
@@ -264,9 +268,25 @@ int main(void)
         else
             touch("/dev/dfkew");   /* insmod failed; late-load will try embedded ko */
     }
-    if (run_ctx(NULL, (char *[]){ KSUD_STAGE, "late-load", "--kmi", "android15-6.6", "--package-name", manager_pkg, NULL }) == 0) {
+    int ko_loaded = (access("/dev/dfka2", F_OK) == 0);
+    int late_rc = run_ctx(NULL, (char *[]){ KSUD_STAGE, "late-load", "--kmi", "android15-6.6", "--package-name", manager_pkg, NULL });
+    /* late-load on this Samsung 6.6 build can return nonzero from unsupported
+     * optional commands (e.g. SuSFS) even though the ko is loaded and root works.
+     * Trust the ko-load marker over the exit code so the UI does not show a false
+     * "ksud start: ERROR" while root is in fact fully functional. */
+    if (late_rc == 0 || ko_loaded) {
         touch("/dev/dfm6");
-        touch("/dev/dfm9");  /* BakaSU: late-load invoked with manager=org.bakasu.bakasu */
+        touch("/dev/dfm9");  /* BakaSU: late-load invoked with pinned manager package */
+        /* BakaSU: explicitly launch the manager so the "auto-open after root"
+         * behaviour matches v9. late-load's implicit start is unreliable here.
+         * Use monkey -p (by package, LAUNCHER intent) so we don't hardcode the
+         * activity class; fall back to am start -n if monkey is absent. */
+        if (access("/system/bin/monkey", X_OK) == 0)
+            run_ctx("u:r:shell:s0", (char *[]){ "/system/bin/monkey", "-p",
+                "com.resukisu.resukisu", "-c", "android.intent.category.LAUNCHER", "1", NULL });
+        else
+            run_ctx("u:r:shell:s0", (char *[]){ "/system/bin/am", "start", "-n",
+                "com.resukisu.resukisu/.ui.MainActivity", NULL });
         if (soft_reboot) {
             while (late_load_running()) sleep(1);
             run_ctx("u:r:ksu:s0", (char *[]){ KSUD, "soft-reboot", NULL });
