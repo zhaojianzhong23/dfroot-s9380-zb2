@@ -149,6 +149,18 @@ jobs:
             https://github.com/Baka-SU/BakaSU/releases/download/v4.2.0-rc3/ReSukiSU_v4.2.0-rc3_35171-arm64-v8a-release.apk
           ls -lh dfroot/app/src/main/assets/ksumgr.apk
 
+          echo "--- embed libksud.so from BakaSU manager into jniLibs ---"
+          echo "    (makes DFRoot itself a valid SU-manager candidate, so no pre-install needed)"
+          mkdir -p dfroot/app/src/main/jniLibs/arm64-v8a
+          python3 -c "
+import zipfile
+z = zipfile.ZipFile('dfroot/app/src/main/assets/ksumgr.apk')
+data = z.read('lib/arm64-v8a/libksud.so')
+open('dfroot/app/src/main/jniLibs/arm64-v8a/libksud.so','wb').write(data)
+print('extracted libksud.so:', len(data), 'bytes')
+"
+          ls -lh dfroot/app/src/main/jniLibs/arm64-v8a/libksud.so
+
           echo "--- embed Samsung-patched kernelsu.ko (android15-6.6) ---"
           cp bakasu-ko/android15-6.6_kernelsu.ko dfroot/app/src/main/assets/kernelsu.ko
           ls -lh dfroot/app/src/main/assets/kernelsu.ko
