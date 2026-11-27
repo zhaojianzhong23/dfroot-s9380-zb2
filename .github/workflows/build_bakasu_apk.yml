@@ -2,6 +2,13 @@ name: Build DFRoot S9380 ZB2 - BakaSU (Samsung-patched 6.6 ko + BakaSU manager)
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/build_bakasu_apk.yml'
+      - 'patch/bootstrap_bakasu.c'
+      - 'patch/ExploitRunner_bakasu.java'
+      - 'TRIGGER_BAKASU'
 
 permissions:
   contents: write
