@@ -1,0 +1,179 @@
+name: Build DFRoot S9380 ZB2 - BakaSU (Samsung-patched 6.6 ko + BakaSU manager)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Minimal BakaSU validation build.
+#  - dfroot.ko : DFRoot 4.7 exploit LKM (android15-6.6), built in DDK with full symbols
+#  - kernelsu.ko : BakaSU upstream + samsung-compat-35285 patch, built for android15-6.6
+#  - manager : official BakaSU v4.2.0-rc3 arm64 (bundled for auto-reinstall, provides libksud.so)
+#  - bootstrap: insmod the Samsung-patched ko, then late-load pinned to org.bakasu.bakasu
+# Everything under /data/adb (modules, profile, module_configs) is left untouched.
+
+jobs:
+  build-ko:
+    name: Build dfroot.ko (android15-6.6, full symbols)
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ylarod/ddk-min:android15-6.6-20260828
+      options: --privileged
+    steps:
+      - name: Build dfroot.ko
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "KDIR=$KDIR"
+          ls -l "$KDIR/Module.symvers"
+          python3 -c "import urllib.request; urllib.request.urlretrieve('https://github.com/diabl0w/DFRoot/archive/refs/tags/v4.7.tar.gz','/tmp/df.tgz')"
+          mkdir -p /tmp/dfsrc && tar xzf /tmp/df.tgz -C /tmp/dfsrc
+          cd /tmp/dfsrc/DFRoot-4.7/lkm
+          make -j"$(nproc)"
+          llvm-objcopy --strip-unneeded \
+            -R .comment -R .note.gnu.build-id -R .note.gnu.property \
+            -R .note.Linux -R .note.GNU-stack \
+            -R .BTF -R .BTF.base -R .llvm_addrsig \
+            -R .hyp.text -R .hyp.bss -R .hyp.rodata -R .hyp.event_ids \
+            -R .hyp.patchable_function_entries -R .hyp.data dfroot.ko
+          ls -l dfroot.ko
+          mkdir -p "$GITHUB_WORKSPACE/artifacts"
+          cp dfroot.ko "$GITHUB_WORKSPACE/artifacts/dfroot-android15-6.6.ko"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dfroot-ko-bakasu
+          path: artifacts/*.ko
+
+  build-bakasu-ko:
+    name: Build Samsung-patched BakaSU kernelsu.ko (android15-6.6)
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ylarod/ddk-min:android15-6.6-20260828
+      options: --privileged
+    steps:
+      - name: Clone BakaSU + apply Samsung 35285 patch + build
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "KDIR=$KDIR"
+          git clone --quiet https://github.com/Baka-SU/BakaSU.git /tmp/baka
+          cd /tmp/baka
+          git checkout --quiet 57b2db6076f439cfd489f14576444e8f0f2f0a25
+          echo "HEAD=$(git rev-parse HEAD) count=$(git rev-list --count HEAD)"
+          echo "UAPI=$(grep -o 'KERNEL_SU_UAPI_VERSION = [0-9]*' uapi/supercall.h | head -1)"
+          curl -fL --retry 3 -o /tmp/samsung.patch \
+            https://raw.githubusercontent.com/xorpix/Root-My-Galaxy-Ultra/main/backends/resukisu/samsung-compat-35285.patch
+          echo "patch sha256: $(sha256sum /tmp/samsung.patch | cut -d' ' -f1)"
+          git apply --check /tmp/samsung.patch
+          git apply /tmp/samsung.patch
+          echo "PATCH_APPLIED_OK"
+          cd /tmp/baka/kernel
+          export PATH="/opt/ddk/clang/clang-r536225/bin:$PATH"
+          make KDIR="$KDIR" \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1 \
+            CONFIG_KSU=m \
+            CONFIG_KSU_SAMSUNG_KDP=y \
+            CONFIG_KSU_SAMSUNG_RKP=y \
+            CONFIG_KSU_SAMSUNG_DEFEX=y \
+            CONFIG_KSU_TRACEPOINT_HOOK=y \
+            CONFIG_KSU_MULTI_MANAGER_SUPPORT=y \
+            CONFIG_DEBUG_INFO_BTF_MODULES=
+          ls -l kernelsu.ko
+          echo "--- verify dynamic-manager strings present ---"
+          grep -a -o "dynamic manager" kernelsu.ko | head -1
+          echo "--- static whitelist hashes ---"
+          grep -a -o -E "[0-9a-f]{64}" kernelsu.ko | sort -u
+          mkdir -p "$GITHUB_WORKSPACE/artifacts"
+          cp kernelsu.ko "$GITHUB_WORKSPACE/artifacts/android15-6.6_kernelsu.ko"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bakasu-ko-bakasu
+          path: artifacts/*.ko
+
+  build-apk:
+    name: Assemble BakaSU validation APK
+    needs: [build-ko, build-bakasu-ko]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dfroot-ko-bakasu
+          path: ko
+      - uses: actions/download-artifact@v4
+        with:
+          name: bakasu-ko-bakasu
+          path: bakasu-ko
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Fetch stock DFRoot 4.7, apply BakaSU patches, embed ko + manager
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 -o df.tgz https://github.com/diabl0w/DFRoot/archive/refs/tags/v4.7.tar.gz
+          tar xzf df.tgz
+          mv DFRoot-4.7 dfroot
+          echo "--- BakaSU bootstrap: insmod 6.6 ko + late-load org.bakasu.bakasu ---"
+          cp patch/bootstrap_bakasu.c dfroot/app/src/main/jni/bootstrap.c
+          grep -n "org.bakasu.bakasu\|KO_PATH\|insmod\|dfka" dfroot/app/src/main/jni/bootstrap.c
+          echo "--- BakaSU ExploitRunner: stage ksumgr.apk + kernelsu.ko ---"
+          cp patch/ExploitRunner_bakasu.java dfroot/app/src/main/java/df/root/ExploitRunner.java
+          grep -n "ksumgr.apk\|kernelsu.ko" dfroot/app/src/main/java/df/root/ExploitRunner.java
+
+          echo "--- embed official BakaSU manager APK (v4.2.0-rc3 arm64) ---"
+          mkdir -p dfroot/app/src/main/assets
+          curl -fL --retry 3 -o dfroot/app/src/main/assets/ksumgr.apk \
+            https://github.com/Baka-SU/BakaSU/releases/download/v4.2.0-rc3/ReSukiSU_v4.2.0-rc3_35171-arm64-v8a-release.apk
+          ls -lh dfroot/app/src/main/assets/ksumgr.apk
+
+          echo "--- embed Samsung-patched kernelsu.ko (android15-6.6) ---"
+          cp bakasu-ko/android15-6.6_kernelsu.ko dfroot/app/src/main/assets/kernelsu.ko
+          ls -lh dfroot/app/src/main/assets/kernelsu.ko
+
+          echo "--- embed dfroot.ko (android15-6.6) ---"
+          mkdir -p dfroot/app/src/main/jni/ko
+          cp ko/dfroot-android15-6.6.ko dfroot/app/src/main/jni/ko/dfroot-android15-6.6.ko
+          for k in android12-5.10 android13-5.10 android13-5.15 android14-5.15 android14-6.1 android16-6.12 android17-6.18; do
+            : > "dfroot/app/src/main/jni/ko/dfroot-$k.ko"
+          done
+          ls -l dfroot/app/src/main/jni/ko
+
+      - name: Build signed APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd dfroot
+          chmod +x gradlew
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          keytool -genkeypair -keystore keystore.jks -storetype JKS \
+            -storepass df-ksu -keypass df-ksu -alias df-ksu \
+            -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=DFRoot" -noprompt
+          printf 'KEYSTORE_FILE=../keystore.jks\nKEYSTORE_PASSWORD=df-ksu\nKEY_ALIAS=df-ksu\nKEY_PASSWORD=df-ksu\n' > signing.properties
+          ./gradlew :app:assembleRelease --no-daemon --stacktrace
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cp app/build/outputs/apk/release/DFRoot_*.apk "$GITHUB_WORKSPACE/out/DFRoot-4.7-S9380-ZB2-BakaSU-v1.apk"
+          ls -lh "$GITHUB_WORKSPACE/out"
+          echo BUILD_OK
+
+      - name: Commit output
+        if: always()
+        shell: bash
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name "ci"
+          git config user.email "ci@users.noreply.github.com"
+          git add -f out/*.apk 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "CI output: BakaSU validation APK v1 (Samsung 6.6 ko + BakaSU manager)"
+            git push
+          fi
