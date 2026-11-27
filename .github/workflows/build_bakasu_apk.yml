@@ -143,10 +143,12 @@ jobs:
           cp patch/ExploitRunner_bakasu.java dfroot/app/src/main/java/df/root/ExploitRunner.java
           grep -n "ksumgr.apk\|kernelsu.ko" dfroot/app/src/main/java/df/root/ExploitRunner.java
 
-          echo "--- embed official BakaSU manager APK (v4.2.0-rc3 arm64) ---"
+          echo "--- embed REAL BakaSU manager APK (org.bakasu.bakasu, sig d3469712..) ---"
           mkdir -p dfroot/app/src/main/assets
           curl -fL --retry 3 -o dfroot/app/src/main/assets/ksumgr.apk \
-            https://github.com/Baka-SU/BakaSU/releases/download/v4.2.0-rc3/ReSukiSU_v4.2.0-rc3_35171-arm64-v8a-release.apk
+            https://github.com/Najip/KernelSU_SUSFS_Samsung_SM-A325X/releases/download/build-20261127-147/BakaSU_v4.2.0-rc3_35286-arm64-v8a-release.apk
+          echo "--- verify bundled manager is REAL BakaSU (org.bakasu.bakasu), not ReSukiSU ---"
+          python3 -c "import zipfile; z=zipfile.ZipFile('dfroot/app/src/main/assets/ksumgr.apk'); s=b''.join(z.read(n) for n in z.namelist() if n.endswith('.dex') or n=='AndroidManifest.xml'); assert s.count(b'org.bakasu.bakasu')>100, 'WRONG manager: not org.bakasu.bakasu'; print('OK: real BakaSU manager, org.bakasu.bakasu x'+str(s.count(b'org.bakasu.bakasu')))"
           ls -lh dfroot/app/src/main/assets/ksumgr.apk
 
           echo "--- embed libksud.so from BakaSU manager into jniLibs ---"
