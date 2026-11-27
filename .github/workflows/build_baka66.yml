@@ -45,6 +45,9 @@ jobs:
           echo "--- compiler ---"
           which clang && clang --version | head -2 || llvm-clang --version | head -2 || true
           echo "--- build args (KDIR from DDK env, Samsung switches on) ---"
+          # BakaSU Makefile's default target 'all' internally calls
+          # make -C $KDIR M=... modules and then check_symbol. Pass make vars
+          # through; do NOT append 'modules' target (Makefile has no such rule).
           make KDIR="$KDIR" \
             ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1 \
             CONFIG_KSU=m \
@@ -53,8 +56,7 @@ jobs:
             CONFIG_KSU_SAMSUNG_DEFEX=y \
             CONFIG_KSU_TRACEPOINT_HOOK=y \
             CONFIG_KSU_MULTI_MANAGER_SUPPORT=y \
-            CONFIG_DEBUG_INFO_BTF_MODULES= \
-            modules -j"$(nproc)"
+            CONFIG_DEBUG_INFO_BTF_MODULES=
           echo "--- built ---"
           ls -l kernelsu.ko
           echo "--- modinfo ---"
