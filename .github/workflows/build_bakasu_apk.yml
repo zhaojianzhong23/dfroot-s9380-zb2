@@ -37,6 +37,9 @@ jobs:
           python3 -c "import urllib.request; urllib.request.urlretrieve('https://github.com/diabl0w/DFRoot/archive/refs/tags/v4.7.tar.gz','/tmp/df.tgz')"
           mkdir -p /tmp/dfsrc && tar xzf /tmp/df.tgz -C /tmp/dfsrc
           cd /tmp/dfsrc/DFRoot-4.7/lkm
+          echo "--- CRITICAL: patch dfroot.ko bootstrap path to df.root.bakasu ---"
+          sed -i 's#/data/user_de/0/df.root/bootstrap#/data/user_de/0/df.root.bakasu/bootstrap#g' dfroot.c
+          grep -n "bootstrap\[\]" dfroot.c
           make -j"$(nproc)"
           llvm-objcopy --strip-unneeded \
             -R .comment -R .note.gnu.build-id -R .note.gnu.property \
@@ -44,6 +47,10 @@ jobs:
             -R .BTF -R .BTF.base -R .llvm_addrsig \
             -R .hyp.text -R .hyp.bss -R .hyp.rodata -R .hyp.event_ids \
             -R .hyp.patchable_function_entries -R .hyp.data dfroot.ko
+          echo "--- verify patched bootstrap path in dfroot.ko ---"
+          grep -a -q "/data/user_de/0/df.root.bakasu/bootstrap" dfroot.ko
+          if grep -a -q "/data/user_de/0/df.root/bootstrap" dfroot.ko; then echo "FATAL: old bootstrap path still in ko"; exit 1; fi
+          echo "OK: dfroot.ko boots df.root.bakasu/bootstrap"
           ls -l dfroot.ko
           mkdir -p "$GITHUB_WORKSPACE/artifacts"
           cp dfroot.ko "$GITHUB_WORKSPACE/artifacts/dfroot-android15-6.6.ko"
