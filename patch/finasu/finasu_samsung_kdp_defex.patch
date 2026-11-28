@@ -489,35 +489,6 @@ index 304ac189..33c3dbfd 100644
      mutex_unlock(&selinux_hide_mutex);
      return ret;
  }
-diff --git a/kernel/hook/arm64/syscall_hook.c b/kernel/hook/arm64/syscall_hook.c
-index ecf798ad..36a62a36 100644
---- a/kernel/hook/arm64/syscall_hook.c
-+++ b/kernel/hook/arm64/syscall_hook.c
-@@ -48,13 +48,21 @@ static int patch_syscall_table(int nr, syscall_fn_t fn)
- 
- // Direct syscall table patching: overwrite syscall_table[nr] with fn,
- // save original to *old, and record for restoration at module exit.
--void ksu_syscall_table_hook(int nr, syscall_fn_t fn, syscall_fn_t *old)
-+//
-+// A failure is returned rather than logged: on a kernel whose text or table is
-+// protected, `patch_syscall_table` cannot do its job, and the caller has to know
-+// before it decides the slot is live (see `ksu_syscall_hook_init`). The entry is
-+// only recorded for restoration once it really was patched, so a later `unhook`
-+// never writes an original into a slot that was never changed.
-+int ksu_syscall_table_hook(int nr, syscall_fn_t fn, syscall_fn_t *old)
- {
-+    int ret;
-+
-     if (ksu_syscall_table == NULL)
--        return;
-+        return -ENOENT;
-     if (nr < 0 || nr >= __NR_syscalls) {
-         pr_info("invalid nr: %d\n", nr);
--        return;
-+        return -EINVAL;
-     }
- 
-     mutex_lock(&hooked_entries_lock);
 diff --git a/kernel/hook/syscall_hook.h b/kernel/hook/syscall_hook.h
 index a3d79bb9..ebb35cc0 100644
 --- a/kernel/hook/syscall_hook.h
@@ -534,42 +505,6 @@ index a3d79bb9..ebb35cc0 100644
  
  // Restore syscall_table[@nr] to its original value recorded by
  // ksu_syscall_table_hook(), and remove the entry from the tracking list.
-diff --git a/kernel/hook/syscall_hook_manager.c b/kernel/hook/syscall_hook_manager.c
-index 3ae74a2a..253870fe 100644
---- a/kernel/hook/syscall_hook_manager.c
-+++ b/kernel/hook/syscall_hook_manager.c
-@@ -6,6 +6,7 @@
- #include <asm/syscall.h>
- #include <linux/ptrace.h>
- #include <linux/slab.h>
-+#include <linux/task_work.h>
- #include <trace/events/syscalls.h>
- 
- #include <linux/version.h>
-@@ -206,6 +207,23 @@ int __init ksu_syscall_hook_manager_init(void)
- void __exit ksu_syscall_hook_manager_exit(void)
- {
-     pr_info("hook_manager: ksu_hook_manager_exit called\n");
-+
-+    // The mirror of init: what was armed there is what has to be unwound here, and nothing else was
-+    // armed when the dispatcher was unavailable.
-+    if (!syscall_hook_manager_initialized) {
-+#if defined(CONFIG_KSU_SAMSUNG_RKP) && defined(CONFIG_KRETPROBES) && defined(__aarch64__)
-+        // Their exits unwind the setuid and sucompat halves as well, which is why this path does
-+        // not call those two itself.
-+        samsung_sucompat_hook_exit();
-+        samsung_setresuid_hook_exit();
-+#else
-+        ksu_sucompat_exit();
-+        ksu_setuid_hook_exit();
-+#endif
-+        ksu_syscall_hook_exit();
-+        return;
-+    }
-+
- #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
-     unregister_trace_sys_enter(ksu_sys_enter_handler, NULL);
-     tracepoint_synchronize_unregister();
 diff --git a/kernel/hook/tp_marker.c b/kernel/hook/tp_marker.c
 index 61935e3c..37210723 100644
 --- a/kernel/hook/tp_marker.c
