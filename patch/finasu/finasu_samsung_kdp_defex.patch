@@ -489,22 +489,6 @@ index 304ac189..33c3dbfd 100644
      mutex_unlock(&selinux_hide_mutex);
      return ret;
  }
-diff --git a/kernel/hook/syscall_hook.h b/kernel/hook/syscall_hook.h
-index a3d79bb9..ebb35cc0 100644
---- a/kernel/hook/syscall_hook.h
-+++ b/kernel/hook/syscall_hook.h
-@@ -43,7 +43,10 @@ bool ksu_syscall_redirect_pin_module(void);
- // Saves the original handler to *@old (if non-NULL) and records the entry
- // for restoration at module exit. Use this for boot-time hooks that replace
- // a real syscall entry (e.g. ksud hooking __NR_execve/__NR_read/__NR_fstat).
--void ksu_syscall_table_hook(int nr, syscall_fn_t fn, syscall_fn_t *old);
-+// Returns 0 once the entry is patched, or a negative errno if it is not - the
-+// table is read-only on some platforms, and a caller that assumes otherwise is
-+// a caller that installs a dispatcher nothing can reach.
-+int ksu_syscall_table_hook(int nr, syscall_fn_t fn, syscall_fn_t *old);
- 
- // Restore syscall_table[@nr] to its original value recorded by
- // ksu_syscall_table_hook(), and remove the entry from the tracking list.
 diff --git a/kernel/hook/tp_marker.c b/kernel/hook/tp_marker.c
 index 61935e3c..37210723 100644
 --- a/kernel/hook/tp_marker.c
