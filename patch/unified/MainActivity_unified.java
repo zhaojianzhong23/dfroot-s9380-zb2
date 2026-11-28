@@ -39,14 +39,15 @@ public class MainActivity extends Activity implements IReporter {
     private int mValidFlavorPos = 0;
 
     /* flavor label -> (id, manager package). Order matches the spinner entries. */
-    private static final String[] FLAVOR_IDS    = { null, "v9", "bakasu" };
+    private static final String[] FLAVOR_IDS    = { null, "v9", "bakasu", "finasu" };
     private static final String[] FLAVOR_LABELS = {
             "Select a root flavor",
             "v9  - Samsung KernelSU (UAPI 5, stable)",
-            "BakaSU  - UAPI 6 (Samsung-patched ko)"
+            "BakaSU  - UAPI 6 (Samsung-patched ko)",
+            "FinaSU  - UAPI 6 manager (dynamic signature)"
     };
     private static final String[] FLAVOR_MGRS   = {
-            null, "me.weishu.kernelsu", "com.resukisu.resukisu"
+            null, "me.weishu.kernelsu", "com.resukisu.resukisu", "me.yuki.fina"
     };
 
     @Override
@@ -64,7 +65,7 @@ public class MainActivity extends Activity implements IReporter {
         mDeCtx = createDeviceProtectedStorageContext();
         setContentView(R.layout.activity_main);
 
-        getActionBar().setSubtitle("unified - v9 / BakaSU");
+        getActionBar().setSubtitle("unified - v9 / BakaSU / FinaSU");
 
         btnRun = findViewById(R.id.btnRun);
         outputScroll = findViewById(R.id.outputScroll);

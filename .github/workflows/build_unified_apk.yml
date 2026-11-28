@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/build_unified_apk.yml'
       - 'patch/unified/**'
+      - 'assets/finasu_v170.apk'
       - 'TRIGGER_UNIFIED'
 
 permissions:
@@ -15,6 +16,8 @@ permissions:
 # One APK (df.root.unified) with a flavor selector:
 #  - v9     : Samsung KernelSU ksud (embedded Samsung ko, UAPI 5), manager me.weishu.kernelsu
 #  - bakasu : Samsung-patched BakaSU ko (UAPI 6) insmod'd by ksud, manager com.resukisu.resukisu
+#  - finasu : same Samsung ko + BakaSU ksud, but registers the FinaSU manager signature
+#             via dynamic-manager before late-load; manager me.yuki.fina
 # A single dfroot.ko (bootstrap path = /data/user_de/0/df.root.unified/bootstrap) is shared.
 # Each flavor stages its own ksud + manager (+ ko for bakasu) before firing the exploit.
 # Boot-time auto-start is disabled: every escalation requires an explicit UI pick.
@@ -123,7 +126,7 @@ jobs:
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Fetch stock DFRoot 4.7, apply unified patches, embed both flavors
+      - name: Fetch stock DFRoot 4.7, apply unified patches, embed three flavors
         shell: bash
         run: |
           set -euo pipefail
@@ -145,7 +148,7 @@ jobs:
           cp patch/unified/BootReceiver_unified.java dfroot/app/src/main/java/df/root/BootReceiver.java
           grep -n "df.root.unified\|flavor\|KO_PATH" dfroot/app/src/main/jni/bootstrap.c | head
           grep -n "manual flavor selection" dfroot/app/src/main/java/df/root/BootReceiver.java
-          grep -n "libksud_v9\|libksud_baka\|PREF_FLAVOR" dfroot/app/src/main/java/df/root/ExploitRunner.java | head
+          grep -n "libksud_v9\|libksud_baka\|mgr_fina\|PREF_FLAVOR" dfroot/app/src/main/java/df/root/ExploitRunner.java | head
           grep -n "FLAVOR_LABELS\|spinnerFlavor" dfroot/app/src/main/java/df/root/MainActivity.java | head
 
           echo "--- jniLibs: both ksud binaries + dfroot ko ---"
@@ -160,13 +163,15 @@ jobs:
           python3 -c "import zipfile; z=zipfile.ZipFile('/tmp/baka_mgr.apk'); d=z.read('lib/arm64-v8a/libksud.so'); open('dfroot/app/src/main/jniLibs/arm64-v8a/libksud_baka.so','wb').write(d); print('bakasu ksud:', len(d), 'bytes')"
           ls -lh dfroot/app/src/main/jniLibs/arm64-v8a/
 
-          echo "--- assets: both managers + bakasu kernelsu.ko ---"
+          echo "--- assets: three managers + bakasu kernelsu.ko ---"
           mkdir -p dfroot/app/src/main/assets
           cp assets/ksumgr.apk dfroot/app/src/main/assets/mgr_v9.apk
           cp /tmp/baka_mgr.apk dfroot/app/src/main/assets/mgr_baka.apk
+          cp assets/finasu_v170.apk dfroot/app/src/main/assets/mgr_fina.apk
           cp bakasu-ko/android15-6.6_kernelsu.ko dfroot/app/src/main/assets/kernelsu.ko
           echo "--- verify managers ---"
           python3 -c "import zipfile; z=zipfile.ZipFile('dfroot/app/src/main/assets/mgr_baka.apk'); s=b''.join(z.read(n) for n in z.namelist() if n.endswith('.dex') or n=='AndroidManifest.xml'); assert s.count(b'org.bakasu.bakasu')>100, 'WRONG bakasu manager'; print('OK bakasu manager org.bakasu.bakasu x'+str(s.count(b'org.bakasu.bakasu')))"
+          python3 -c "import zipfile; z=zipfile.ZipFile('dfroot/app/src/main/assets/mgr_fina.apk'); s=b''.join(z.read(n) for n in z.namelist() if n.endswith('.dex') or n=='AndroidManifest.xml'); assert s.count(b'me.yuki.fina')>0, 'WRONG finasu manager'; print('OK finasu manager me.yuki.fina x'+str(s.count(b'me.yuki.fina')))"
           python3 -c "import zipfile; z=zipfile.ZipFile('dfroot/app/src/main/assets/mgr_v9.apk'); s=b''.join(z.read(n) for n in z.namelist() if n.endswith('.dex') or n=='AndroidManifest.xml'); assert s.count(b'me.weishu.kernelsu')>10, 'WRONG v9 manager'; print('OK v9 manager me.weishu.kernelsu x'+str(s.count(b'me.weishu.kernelsu')))"
           ls -lh dfroot/app/src/main/assets/
 
@@ -191,7 +196,7 @@ jobs:
           printf 'KEYSTORE_FILE=../keystore.jks\nKEYSTORE_PASSWORD=df-ksu\nKEY_ALIAS=df-ksu\nKEY_PASSWORD=df-ksu\n' > signing.properties
           ./gradlew :app:assembleRelease --no-daemon --stacktrace
           mkdir -p "$GITHUB_WORKSPACE/out"
-          cp app/build/outputs/apk/release/DFRoot_*.apk "$GITHUB_WORKSPACE/out/DFRoot-4.7-S9380-ZB2-Unified.apk"
+          cp app/build/outputs/apk/release/DFRoot_*.apk "$GITHUB_WORKSPACE/out/DFRoot-4.7-S9380-ZB2-Unified-v2.apk"
           ls -lh "$GITHUB_WORKSPACE/out"
           echo BUILD_OK
 
@@ -205,6 +210,6 @@ jobs:
           git config user.email "ci@users.noreply.github.com"
           git add -f out/*.apk 2>/dev/null || true
           if ! git diff --cached --quiet; then
-            git commit -m "CI output: Unified APK (v9 + BakaSU flavor selector)"
+            git commit -m "CI output: Unified v2 APK (v9 + BakaSU + FinaSU flavor selector)"
             git push
           fi

@@ -21,6 +21,8 @@
  * Flavor selected in the UI is stored in prefs as name="flavor">v9< or >bakasu<.
  *  - bakasu : stage the Samsung-patched BakaSU kernelsu.ko, insmod it, then
  *             late-load pinned to com.resukisu.resukisu (UAPI 6).
+ *  - finasu : same Samsung-patched ko + BakaSU ksud, but register the FinaSU
+ *             manager signature through dynamic-manager before late-load.
  *  - v9     : no standalone ko (Samsung ko is embedded in the v9 ksud),
  *             late-load pinned to me.weishu.kernelsu (UAPI 5).
  * Everything else (partition RO, zygote env, optional module-disable, soft reboot)
@@ -272,7 +274,9 @@ int main(void)
     }
 
     touch("/dev/dfm5");
-    int is_bakasu = (strcmp(flavor, "bakasu") == 0);
+    int is_bakasu  = (strcmp(flavor, "bakasu") == 0);
+    int is_finasu  = (strcmp(flavor, "finasu") == 0);
+    int use_samsung_ko = is_bakasu || is_finasu;
 
     /* auto-reinstall the selected manager APK if the user uninstalled it.
      * ExploitRunner stages the correct flavor's manager to MGR_APK. */
@@ -288,10 +292,10 @@ int main(void)
 
     int ko_loaded = 0;
     int late_rc;
-    if (is_bakasu) {
-        /* BakaSU: insmod the Samsung-patched 6.6 ko staged from assets, then
-         * late-load with --kmi so the daemon sees has_kernelsu()=true and skips
-         * its embedded (wrong) ko. */
+    if (use_samsung_ko) {
+        /* BakaSU / FinaSU: insmod the Samsung-patched 6.6 ko staged from assets,
+         * then late-load with --kmi so the daemon sees has_kernelsu()=true and
+         * skips its embedded (wrong) ko. */
         if (access(KO_PATH, F_OK) == 0) {
             touch("/dev/dfka1");
             if (run_ctx(NULL, (char *[]){ KSUD_STAGE, "insmod", KO_PATH, NULL }) == 0)
@@ -300,6 +304,18 @@ int main(void)
                 touch("/dev/dfkew");
         }
         ko_loaded = (access("/dev/dfka2", F_OK) == 0);
+
+        /* FinaSU manager's signature is not in the ko whitelist. Register it at
+         * runtime via the ko's dynamic-manager support before late-load. */
+        if (is_finasu && access(MGR_APK, F_OK) == 0) {
+            touch("/dev/dfdm1");
+            if (run_ctx(NULL, (char *[]){ KSUD_STAGE, "kernel", "dynamic-manager",
+                    "set-apk", MGR_APK, NULL }) == 0)
+                touch("/dev/dfdm2");
+            else
+                touch("/dev/dfdme");
+        }
+
         late_rc = run_ctx(NULL, (char *[]){ KSUD_STAGE, "late-load", "--kmi",
             "android15-6.6", "--package-name", su_manager, NULL });
     } else {
