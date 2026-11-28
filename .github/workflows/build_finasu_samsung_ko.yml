@@ -33,7 +33,7 @@ jobs:
           git apply --check "$GITHUB_WORKSPACE/patch/finasu/finasu_samsung_kdp_defex.patch"
           git apply "$GITHUB_WORKSPACE/patch/finasu/finasu_samsung_kdp_defex.patch"
           echo "PATCH_APPLIED_OK"
-          grep -n 'CONFIG_KSU_SAMSUNG_KDP' kernel/Kconfig | head -3
+          grep -n 'KSU_SAMSUNG_KDP' kernel/Kconfig | head -3
           grep -n 'samsung_kdp.o' kernel/Kbuild | head -3
 
       - name: Build kernelsu.ko with trusted FinaSU manager signature
