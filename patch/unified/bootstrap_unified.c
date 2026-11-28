@@ -21,8 +21,8 @@
  * Flavor selected in the UI is stored in prefs as name="flavor">v9< or >bakasu<.
  *  - bakasu : stage the Samsung-patched BakaSU kernelsu.ko, insmod it, then
  *             late-load pinned to com.resukisu.resukisu (UAPI 6).
- *  - finasu : same Samsung-patched ko + BakaSU ksud, but register the FinaSU
- *             manager signature through dynamic-manager before late-load.
+ *  - finasu : FinaSU ko rebuilt with Samsung KDP/DEFEX compat and the FinaSU
+ *             manager certificate compiled in; FinaSU ksud, late-load without --kmi.
  *  - v9     : no standalone ko (Samsung ko is embedded in the v9 ksud),
  *             late-load pinned to me.weishu.kernelsu (UAPI 5).
  * Everything else (partition RO, zygote env, optional module-disable, soft reboot)
@@ -305,19 +305,16 @@ int main(void)
         }
         ko_loaded = (access("/dev/dfka2", F_OK) == 0);
 
-        /* FinaSU manager's signature is not in the ko whitelist. Register it at
-         * runtime via the ko's dynamic-manager support before late-load. */
-        if (is_finasu && access(MGR_APK, F_OK) == 0) {
-            touch("/dev/dfdm1");
-            if (run_ctx(NULL, (char *[]){ KSUD_STAGE, "kernel", "dynamic-manager",
-                    "set-apk", MGR_APK, NULL }) == 0)
-                touch("/dev/dfdm2");
-            else
-                touch("/dev/dfdme");
+        /* FinaSU ko has the FinaSU manager certificate compiled in statically,
+         * so no dynamic-manager registration is needed. */
+        if (is_bakasu) {
+            late_rc = run_ctx(NULL, (char *[]){ KSUD_STAGE, "late-load", "--kmi",
+                "android15-6.6", "--package-name", su_manager, NULL });
+        } else {
+            /* FinaSU ksud detects KMI itself and does not accept --kmi. */
+            late_rc = run_ctx(NULL, (char *[]){ KSUD_STAGE, "late-load",
+                "--package-name", su_manager, NULL });
         }
-
-        late_rc = run_ctx(NULL, (char *[]){ KSUD_STAGE, "late-load", "--kmi",
-            "android15-6.6", "--package-name", su_manager, NULL });
     } else {
         /* v9: Samsung ksud has the compatible ko embedded; late-load alone is
          * enough (same as the proven v9 build). */

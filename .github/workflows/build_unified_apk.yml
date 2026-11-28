@@ -16,8 +16,8 @@ permissions:
 # One APK (df.root.unified) with a flavor selector:
 #  - v9     : Samsung KernelSU ksud (embedded Samsung ko, UAPI 5), manager me.weishu.kernelsu
 #  - bakasu : Samsung-patched BakaSU ko (UAPI 6) insmod'd by ksud, manager com.resukisu.resukisu
-#  - finasu : same Samsung ko + BakaSU ksud, but registers the FinaSU manager signature
-#             via dynamic-manager before late-load; manager me.yuki.fina
+#  - finasu : FinaSU ko rebuilt with Samsung KDP/DEFEX compat + FinaSU ksud,
+#             manager me.yuki.fina, full FinaSU kernel features
 # A single dfroot.ko (bootstrap path = /data/user_de/0/df.root.unified/bootstrap) is shared.
 # Each flavor stages its own ksud + manager (+ ko for bakasu) before firing the exploit.
 # Boot-time auto-start is disabled: every escalation requires an explicit UI pick.
@@ -104,9 +104,51 @@ jobs:
           name: bakasu-ko-unified
           path: artifacts/*.ko
 
+  build-finasu-ko:
+    name: Build Samsung-patched FinaSU kernelsu.ko (android15-6.6)
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ylarod/ddk-min:android15-6.6-20260828
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clone FinaSU + apply Samsung KDP/DEFEX patch + build
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "KDIR=$KDIR"
+          git clone --quiet https://github.com/LyraVoid/FinaSU.git /tmp/fina
+          cd /tmp/fina
+          git checkout --quiet 1627e52fdaf1bb5eeeb6ae763eb15c18a111511e
+          echo "FINASU_HEAD=$(git rev-parse HEAD)"
+          git apply --check "$GITHUB_WORKSPACE/patch/finasu/finasu_samsung_kdp_defex.patch"
+          git apply "$GITHUB_WORKSPACE/patch/finasu/finasu_samsung_kdp_defex.patch"
+          echo "FINASU_PATCH_APPLIED_OK"
+          cd /tmp/fina/kernel
+          export PATH="/opt/ddk/clang/clang-r536225/bin:$PATH"
+          make -j"$(nproc)" \
+            KDIR="$KDIR" \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1 \
+            CONFIG_KSU=m \
+            CONFIG_KSU_SAMSUNG_KDP=y \
+            CONFIG_KSU_SAMSUNG_DEFEX=y \
+            CONFIG_KSU_DYNAMIC_MANAGER=y \
+            KSU_EXPECTED_SIZE=716 \
+            KSU_EXPECTED_HASH=2d89b50aaf1db013c2b6738f973f48b62ea21a3a8d7216bfec3521065d448458
+          ls -l kernelsu.ko
+          grep -a -o "Samsung KDP task-scoped credential" kernelsu.ko | head -1
+          grep -a -o "2d89b50aaf1db013c2b6738f973f48b62ea21a3a8d7216bfec3521065d448458" kernelsu.ko | head -1
+          mkdir -p "$GITHUB_WORKSPACE/artifacts"
+          cp kernelsu.ko "$GITHUB_WORKSPACE/artifacts/android15-6.6_finasu_kernelsu.ko"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: finasu-ko-unified
+          path: artifacts/*.ko
+
   build-apk:
     name: Assemble Unified APK
-    needs: [build-ko, build-bakasu-ko]
+    needs: [build-ko, build-bakasu-ko, build-finasu-ko]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -119,6 +161,10 @@ jobs:
         with:
           name: bakasu-ko-unified
           path: bakasu-ko
+      - uses: actions/download-artifact@v4
+        with:
+          name: finasu-ko-unified
+          path: finasu-ko
 
       - uses: actions/setup-java@v4
         with:
@@ -148,10 +194,10 @@ jobs:
           cp patch/unified/BootReceiver_unified.java dfroot/app/src/main/java/df/root/BootReceiver.java
           grep -n "df.root.unified\|flavor\|KO_PATH" dfroot/app/src/main/jni/bootstrap.c | head
           grep -n "manual flavor selection" dfroot/app/src/main/java/df/root/BootReceiver.java
-          grep -n "libksud_v9\|libksud_baka\|mgr_fina\|PREF_FLAVOR" dfroot/app/src/main/java/df/root/ExploitRunner.java | head
+          grep -n "libksud_v9\|libksud_baka\|libksud_fina\|mgr_fina\|PREF_FLAVOR" dfroot/app/src/main/java/df/root/ExploitRunner.java | head
           grep -n "FLAVOR_LABELS\|spinnerFlavor" dfroot/app/src/main/java/df/root/MainActivity.java | head
 
-          echo "--- jniLibs: both ksud binaries + dfroot ko ---"
+          echo "--- jniLibs: three ksud binaries + dfroot ko ---"
           mkdir -p dfroot/app/src/main/jniLibs/arm64-v8a
           # v9 Samsung ksud (embedded Samsung-compatible kernelsu.ko, md5 12aa2c55...)
           cp assets/libksud.so dfroot/app/src/main/jniLibs/arm64-v8a/libksud_v9.so
@@ -161,14 +207,16 @@ jobs:
           curl -fL --retry 3 -o /tmp/baka_mgr.apk \
             https://github.com/Najip/KernelSU_SUSFS_Samsung_SM-A325X/releases/download/build-20261127-147/BakaSU_v4.2.0-rc3_35286-arm64-v8a-release.apk
           python3 -c "import zipfile; z=zipfile.ZipFile('/tmp/baka_mgr.apk'); d=z.read('lib/arm64-v8a/libksud.so'); open('dfroot/app/src/main/jniLibs/arm64-v8a/libksud_baka.so','wb').write(d); print('bakasu ksud:', len(d), 'bytes')"
+          python3 -c "import zipfile; z=zipfile.ZipFile('assets/finasu_v170.apk'); d=z.read('lib/arm64-v8a/libksud.so'); open('dfroot/app/src/main/jniLibs/arm64-v8a/libksud_fina.so','wb').write(d); print('finasu ksud:', len(d), 'bytes')"
           ls -lh dfroot/app/src/main/jniLibs/arm64-v8a/
 
-          echo "--- assets: three managers + bakasu kernelsu.ko ---"
+          echo "--- assets: three managers + bakasu/finasu kernelsu.ko ---"
           mkdir -p dfroot/app/src/main/assets
           cp assets/ksumgr.apk dfroot/app/src/main/assets/mgr_v9.apk
           cp /tmp/baka_mgr.apk dfroot/app/src/main/assets/mgr_baka.apk
           cp assets/finasu_v170.apk dfroot/app/src/main/assets/mgr_fina.apk
           cp bakasu-ko/android15-6.6_kernelsu.ko dfroot/app/src/main/assets/kernelsu.ko
+          cp finasu-ko/android15-6.6_finasu_kernelsu.ko dfroot/app/src/main/assets/finasu-kernelsu.ko
           echo "--- verify managers ---"
           python3 -c "import zipfile; z=zipfile.ZipFile('dfroot/app/src/main/assets/mgr_baka.apk'); s=b''.join(z.read(n) for n in z.namelist() if n.endswith('.dex') or n=='AndroidManifest.xml'); assert s.count(b'org.bakasu.bakasu')>100, 'WRONG bakasu manager'; print('OK bakasu manager org.bakasu.bakasu x'+str(s.count(b'org.bakasu.bakasu')))"
           python3 -c "import zipfile; z=zipfile.ZipFile('dfroot/app/src/main/assets/mgr_fina.apk'); s=b''.join(z.read(n) for n in z.namelist() if n.endswith('.dex') or n=='AndroidManifest.xml'); assert s.count(b'me.yuki.fina')>0, 'WRONG finasu manager'; print('OK finasu manager me.yuki.fina x'+str(s.count(b'me.yuki.fina')))"
@@ -196,7 +244,7 @@ jobs:
           printf 'KEYSTORE_FILE=../keystore.jks\nKEYSTORE_PASSWORD=df-ksu\nKEY_ALIAS=df-ksu\nKEY_PASSWORD=df-ksu\n' > signing.properties
           ./gradlew :app:assembleRelease --no-daemon --stacktrace
           mkdir -p "$GITHUB_WORKSPACE/out"
-          cp app/build/outputs/apk/release/DFRoot_*.apk "$GITHUB_WORKSPACE/out/DFRoot-4.7-S9380-ZB2-Unified-v2.apk"
+          cp app/build/outputs/apk/release/DFRoot_*.apk "$GITHUB_WORKSPACE/out/DFRoot-4.7-S9380-ZB2-Unified-v3.apk"
           ls -lh "$GITHUB_WORKSPACE/out"
           echo BUILD_OK
 
@@ -210,6 +258,6 @@ jobs:
           git config user.email "ci@users.noreply.github.com"
           git add -f out/*.apk 2>/dev/null || true
           if ! git diff --cached --quiet; then
-            git commit -m "CI output: Unified v2 APK (v9 + BakaSU + FinaSU flavor selector)"
+            git commit -m "CI output: Unified v3 APK (FinaSU ko with Samsung KDP/DEFEX)"
             git push
           fi

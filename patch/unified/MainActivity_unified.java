@@ -44,7 +44,7 @@ public class MainActivity extends Activity implements IReporter {
             "Select a root flavor",
             "v9  - Samsung KernelSU (UAPI 5, stable)",
             "BakaSU  - UAPI 6 (Samsung-patched ko)",
-            "FinaSU  - UAPI 6 manager (dynamic signature)"
+            "FinaSU  - full features (Samsung-patched ko)"
     };
     private static final String[] FLAVOR_MGRS   = {
             null, "me.weishu.kernelsu", "com.resukisu.resukisu", "me.yuki.fina"
