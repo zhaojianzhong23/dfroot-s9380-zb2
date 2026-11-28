@@ -66,7 +66,7 @@ jobs:
       image: ghcr.io/ylarod/ddk-min:android15-6.6-20260828
       options: --privileged
     steps:
-      - name: Clone BakaSU + apply Samsung 35285 patch + build
+      - name: Clone BakaSU + apply Samsung 35286 patch + build
         shell: bash
         run: |
           set -euo pipefail
@@ -76,7 +76,7 @@ jobs:
           git checkout --quiet 57b2db6076f439cfd489f14576444e8f0f2f0a25
           echo "HEAD=$(git rev-parse HEAD) count=$(git rev-list --count HEAD)"
           curl -fL --retry 3 -o /tmp/samsung.patch \
-            https://raw.githubusercontent.com/xorpix/Root-My-Galaxy-Ultra/main/backends/resukisu/samsung-compat-35285.patch
+            https://raw.githubusercontent.com/xorpix/Root-My-Galaxy-Ultra/main/backends/resukisu/samsung-compat-35286.patch
           git apply --check /tmp/samsung.patch
           git apply /tmp/samsung.patch
           echo "PATCH_APPLIED_OK"
