@@ -1,0 +1,210 @@
+name: Build DFRoot S9380 ZB2 - Unified (v9 + BakaSU flavor selector)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/build_unified_apk.yml'
+      - 'patch/unified/**'
+      - 'TRIGGER_UNIFIED'
+
+permissions:
+  contents: write
+
+# One APK (df.root.unified) with a flavor selector:
+#  - v9     : Samsung KernelSU ksud (embedded Samsung ko, UAPI 5), manager me.weishu.kernelsu
+#  - bakasu : Samsung-patched BakaSU ko (UAPI 6) insmod'd by ksud, manager com.resukisu.resukisu
+# A single dfroot.ko (bootstrap path = /data/user_de/0/df.root.unified/bootstrap) is shared.
+# Each flavor stages its own ksud + manager (+ ko for bakasu) before firing the exploit.
+# Boot-time auto-start is disabled: every escalation requires an explicit UI pick.
+
+jobs:
+  build-ko:
+    name: Build unified dfroot.ko (android15-6.6, full symbols)
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ylarod/ddk-min:android15-6.6-20260828
+      options: --privileged
+    steps:
+      - name: Build dfroot.ko with unified bootstrap path
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "KDIR=$KDIR"
+          ls -l "$KDIR/Module.symvers"
+          python3 -c "import urllib.request; urllib.request.urlretrieve('https://github.com/diabl0w/DFRoot/archive/refs/tags/v4.7.tar.gz','/tmp/df.tgz')"
+          mkdir -p /tmp/dfsrc && tar xzf /tmp/df.tgz -C /tmp/dfsrc
+          cd /tmp/dfsrc/DFRoot-4.7/lkm
+          echo "--- patch dfroot.ko bootstrap path to df.root.unified ---"
+          sed -i 's#/data/user_de/0/df.root/bootstrap#/data/user_de/0/df.root.unified/bootstrap#g' dfroot.c
+          grep -n "bootstrap\[\]" dfroot.c
+          make -j"$(nproc)"
+          llvm-objcopy --strip-unneeded \
+            -R .comment -R .note.gnu.build-id -R .note.gnu.property \
+            -R .note.Linux -R .note.GNU-stack \
+            -R .BTF -R .BTF.base -R .llvm_addrsig \
+            -R .hyp.text -R .hyp.bss -R .hyp.rodata -R .hyp.event_ids \
+            -R .hyp.patchable_function_entries -R .hyp.data dfroot.ko
+          echo "--- verify patched bootstrap path in dfroot.ko ---"
+          grep -a -q "/data/user_de/0/df.root.unified/bootstrap" dfroot.ko
+          if grep -a -q "/data/user_de/0/df.root/bootstrap" dfroot.ko; then echo "FATAL: old path still present"; exit 1; fi
+          if grep -a -q "/data/user_de/0/df.root.bakasu/bootstrap" dfroot.ko; then echo "FATAL: bakasu path still present"; exit 1; fi
+          echo "OK: unified dfroot.ko boots df.root.unified/bootstrap"
+          mkdir -p "$GITHUB_WORKSPACE/artifacts"
+          cp dfroot.ko "$GITHUB_WORKSPACE/artifacts/dfroot-android15-6.6.ko"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dfroot-ko-unified
+          path: artifacts/*.ko
+
+  build-bakasu-ko:
+    name: Build Samsung-patched BakaSU kernelsu.ko (android15-6.6)
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ylarod/ddk-min:android15-6.6-20260828
+      options: --privileged
+    steps:
+      - name: Clone BakaSU + apply Samsung 35285 patch + build
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "KDIR=$KDIR"
+          git clone --quiet https://github.com/Baka-SU/BakaSU.git /tmp/baka
+          cd /tmp/baka
+          git checkout --quiet 57b2db6076f439cfd489f14576444e8f0f2f0a25
+          echo "HEAD=$(git rev-parse HEAD) count=$(git rev-list --count HEAD)"
+          curl -fL --retry 3 -o /tmp/samsung.patch \
+            https://raw.githubusercontent.com/xorpix/Root-My-Galaxy-Ultra/main/backends/resukisu/samsung-compat-35285.patch
+          git apply --check /tmp/samsung.patch
+          git apply /tmp/samsung.patch
+          echo "PATCH_APPLIED_OK"
+          cd /tmp/baka/kernel
+          export PATH="/opt/ddk/clang/clang-r536225/bin:$PATH"
+          make KDIR="$KDIR" \
+            ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1 \
+            CONFIG_KSU=m \
+            CONFIG_KSU_SAMSUNG_KDP=y \
+            CONFIG_KSU_SAMSUNG_RKP=y \
+            CONFIG_KSU_SAMSUNG_DEFEX=y \
+            CONFIG_KSU_TRACEPOINT_HOOK=y \
+            CONFIG_KSU_MULTI_MANAGER_SUPPORT=y \
+            CONFIG_DEBUG_INFO_BTF_MODULES=
+          ls -l kernelsu.ko
+          grep -a -o "dynamic manager" kernelsu.ko | head -1
+          mkdir -p "$GITHUB_WORKSPACE/artifacts"
+          cp kernelsu.ko "$GITHUB_WORKSPACE/artifacts/android15-6.6_kernelsu.ko"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bakasu-ko-unified
+          path: artifacts/*.ko
+
+  build-apk:
+    name: Assemble Unified APK
+    needs: [build-ko, build-bakasu-ko]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dfroot-ko-unified
+          path: ko
+      - uses: actions/download-artifact@v4
+        with:
+          name: bakasu-ko-unified
+          path: bakasu-ko
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Fetch stock DFRoot 4.7, apply unified patches, embed both flavors
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 -o df.tgz https://github.com/diabl0w/DFRoot/archive/refs/tags/v4.7.tar.gz
+          tar xzf df.tgz
+          mv DFRoot-4.7 dfroot
+
+          echo "--- rename: applicationId df.root.unified, label DFRoot Unified ---"
+          sed -i 's/applicationId = "df.root"/applicationId = "df.root.unified"/' dfroot/app/build.gradle.kts
+          sed -i 's/android:label="DFRoot"/android:label="DFRoot Unified"/' dfroot/app/src/main/AndroidManifest.xml
+          grep -n "applicationId\|namespace" dfroot/app/build.gradle.kts
+          grep -n "android:label" dfroot/app/src/main/AndroidManifest.xml
+
+          echo "--- unified bootstrap / ExploitRunner / UI ---"
+          cp patch/unified/bootstrap_unified.c dfroot/app/src/main/jni/bootstrap.c
+          cp patch/unified/ExploitRunner_unified.java dfroot/app/src/main/java/df/root/ExploitRunner.java
+          cp patch/unified/MainActivity_unified.java dfroot/app/src/main/java/df/root/MainActivity.java
+          cp patch/unified/activity_main_unified.xml dfroot/app/src/main/res/layout/activity_main.xml
+          cp patch/unified/BootReceiver_unified.java dfroot/app/src/main/java/df/root/BootReceiver.java
+          grep -n "df.root.unified\|flavor\|KO_PATH" dfroot/app/src/main/jni/bootstrap.c | head
+          grep -n "manual flavor selection" dfroot/app/src/main/java/df/root/BootReceiver.java
+          grep -n "libksud_v9\|libksud_baka\|PREF_FLAVOR" dfroot/app/src/main/java/df/root/ExploitRunner.java | head
+          grep -n "FLAVOR_LABELS\|spinnerFlavor" dfroot/app/src/main/java/df/root/MainActivity.java | head
+
+          echo "--- jniLibs: both ksud binaries + dfroot ko ---"
+          mkdir -p dfroot/app/src/main/jniLibs/arm64-v8a
+          # v9 Samsung ksud (embedded Samsung-compatible kernelsu.ko, md5 12aa2c55...)
+          cp assets/libksud.so dfroot/app/src/main/jniLibs/arm64-v8a/libksud_v9.so
+          echo "v9 ksud md5: $(md5sum dfroot/app/src/main/jniLibs/arm64-v8a/libksud_v9.so | cut -d' ' -f1)"
+
+          # BakaSU official manager -> extract its libksud.so as libksud_baka.so
+          curl -fL --retry 3 -o /tmp/baka_mgr.apk \
+            https://github.com/Najip/KernelSU_SUSFS_Samsung_SM-A325X/releases/download/build-20261127-147/BakaSU_v4.2.0-rc3_35286-arm64-v8a-release.apk
+          python3 -c "import zipfile; z=zipfile.ZipFile('/tmp/baka_mgr.apk'); d=z.read('lib/arm64-v8a/libksud.so'); open('dfroot/app/src/main/jniLibs/arm64-v8a/libksud_baka.so','wb').write(d); print('bakasu ksud:', len(d), 'bytes')"
+          ls -lh dfroot/app/src/main/jniLibs/arm64-v8a/
+
+          echo "--- assets: both managers + bakasu kernelsu.ko ---"
+          mkdir -p dfroot/app/src/main/assets
+          cp assets/ksumgr.apk dfroot/app/src/main/assets/mgr_v9.apk
+          cp /tmp/baka_mgr.apk dfroot/app/src/main/assets/mgr_baka.apk
+          cp bakasu-ko/android15-6.6_kernelsu.ko dfroot/app/src/main/assets/kernelsu.ko
+          echo "--- verify managers ---"
+          python3 -c "import zipfile; z=zipfile.ZipFile('dfroot/app/src/main/assets/mgr_baka.apk'); s=b''.join(z.read(n) for n in z.namelist() if n.endswith('.dex') or n=='AndroidManifest.xml'); assert s.count(b'org.bakasu.bakasu')>100, 'WRONG bakasu manager'; print('OK bakasu manager org.bakasu.bakasu x'+str(s.count(b'org.bakasu.bakasu')))"
+          python3 -c "import zipfile; z=zipfile.ZipFile('dfroot/app/src/main/assets/mgr_v9.apk'); s=b''.join(z.read(n) for n in z.namelist() if n.endswith('.dex') or n=='AndroidManifest.xml'); assert s.count(b'me.weishu.kernelsu')>10, 'WRONG v9 manager'; print('OK v9 manager me.weishu.kernelsu x'+str(s.count(b'me.weishu.kernelsu')))"
+          ls -lh dfroot/app/src/main/assets/
+
+          echo "--- embed unified dfroot.ko ---"
+          mkdir -p dfroot/app/src/main/jni/ko
+          cp ko/dfroot-android15-6.6.ko dfroot/app/src/main/jni/ko/dfroot-android15-6.6.ko
+          for k in android12-5.10 android13-5.10 android13-5.15 android14-5.15 android14-6.1 android16-6.12 android17-6.18; do
+            : > "dfroot/app/src/main/jni/ko/dfroot-$k.ko"
+          done
+          ls -l dfroot/app/src/main/jni/ko
+
+      - name: Build signed APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd dfroot
+          chmod +x gradlew
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          keytool -genkeypair -keystore keystore.jks -storetype JKS \
+            -storepass df-ksu -keypass df-ksu -alias df-ksu \
+            -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=DFRoot" -noprompt
+          printf 'KEYSTORE_FILE=../keystore.jks\nKEYSTORE_PASSWORD=df-ksu\nKEY_ALIAS=df-ksu\nKEY_PASSWORD=df-ksu\n' > signing.properties
+          ./gradlew :app:assembleRelease --no-daemon --stacktrace
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cp app/build/outputs/apk/release/DFRoot_*.apk "$GITHUB_WORKSPACE/out/DFRoot-4.7-S9380-ZB2-Unified.apk"
+          ls -lh "$GITHUB_WORKSPACE/out"
+          echo BUILD_OK
+
+      - name: Commit output
+        if: always()
+        shell: bash
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name "ci"
+          git config user.email "ci@users.noreply.github.com"
+          git add -f out/*.apk 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "CI output: Unified APK (v9 + BakaSU flavor selector)"
+            git push
+          fi
